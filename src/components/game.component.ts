@@ -57,8 +57,11 @@ export class GameComponent implements OnInit {
                 default: 'arcade',
                 arcade: {
                     gravity: { y: 2000, x: 0 },
-                    debug: false
+                    debug: false // Set to true for debugging
                 }
+            },
+            render: {
+                pixelArt: true
             },
             scene: {
                 preload: this.preload,
@@ -76,7 +79,10 @@ export class GameComponent implements OnInit {
 
     preload(this: Phaser.Scene) {
         this.load.image('background', 'assets/backgrounds/' + nivel1.background + '.png');
-        // Aquí puedes cargar más assets si los necesitas para enemigos, coleccionables, etc.
+        this.load.image('player', 'assets/' + nivel1.player.texture + '.png');
+        this.load.image('platform', 'assets/grass.png');
+        this.load.image('movingPlatform', 'assets/moving-platform.png');
+        this.load.image('starGold', 'assets/starGold.png');
     }
 
     create(this: Phaser.Scene) {
@@ -86,7 +92,6 @@ export class GameComponent implements OnInit {
 
         // Agregar fondo que se repite horizontalmente
         const backgroundImage = this.textures.get('background');
-        const backgroundWidth = backgroundImage.getSourceImage().width;
         const backgroundHeight = backgroundImage.getSourceImage().height;
 
         const backgroundTileSprite = this.add.tileSprite(
@@ -101,32 +106,37 @@ export class GameComponent implements OnInit {
             GAME_CONSTANTS.worldHeight / backgroundHeight
         );
 
-        // Store the background in the scene's data for use in the update method
+        backgroundTileSprite.texture.setFilter(Phaser.Textures.NEAREST);
+
         this.data.set('background', backgroundTileSprite);
 
         // Crear plataformas
         const platforms = this.physics.add.staticGroup();
+
         nivel1.platforms.forEach(platform => {
-            platforms.add(
-                this.add.rectangle(
-                    (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize,
-                    GAME_CONSTANTS.worldHeight - (platform.y + platform.height / 2) * GAME_CONSTANTS.boxSize,
-                    platform.width * GAME_CONSTANTS.boxSize,
-                    platform.height * GAME_CONSTANTS.boxSize,
-                    0x00ff00
-                )
-            );
+            const platformWidth = platform.width * GAME_CONSTANTS.boxSize;
+            const platformHeight = platform.height * GAME_CONSTANTS.boxSize;
+            const x = (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize;
+            const y = GAME_CONSTANTS.worldHeight - (platform.y + platform.height / 2) * GAME_CONSTANTS.boxSize;
+
+            const platformSprite = this.add.tileSprite(x, y, platformWidth, platformHeight, 'platform');
+            platformSprite.setOrigin(0.5, 0.5);
+
+            platforms.add(platformSprite);
+
+            const platformBody = platformSprite.body as Phaser.Physics.Arcade.StaticBody;
+            platformBody.setSize(platformWidth, platformHeight);
+            platformBody.updateFromGameObject();
         });
 
-        // Crear jugador
-        const player = this.add.rectangle(
+        // Crear jugador con textura
+        const player = this.physics.add.sprite(
             nivel1.player.x * GAME_CONSTANTS.boxSize,
             GAME_CONSTANTS.worldHeight - nivel1.player.y * GAME_CONSTANTS.boxSize,
-            GAME_CONSTANTS.boxSize,
-            GAME_CONSTANTS.boxSize,
-            0xff0000
+            'player'
         );
-        this.physics.add.existing(player);
+        player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 2);
+        player.texture.setFilter(Phaser.Textures.NEAREST);
 
         const playerBody = player.body as Phaser.Physics.Arcade.Body;
         playerBody.setBounce(0.2);
@@ -148,11 +158,10 @@ export class GameComponent implements OnInit {
             this.physics.add.existing(enemySprite);
             enemies.add(enemySprite);
 
-            // Configurar comportamiento del enemigo según su tipo
             const enemyBody = enemySprite.body as Phaser.Physics.Arcade.Body;
-            if (enemy.type === 'basic' || enemy.type === 'jumper') {
+            if (enemy.type === 'jumper') {
                 enemyBody.setCollideWorldBounds(true);
-                if (enemy.type === 'basic' && enemy.patrolDistance) {
+                if (enemy.patrolDistance) {
                     this.tweens.add({
                         targets: enemySprite,
                         x: (enemy.x + enemy.patrolDistance) * GAME_CONSTANTS.boxSize,
@@ -180,60 +189,58 @@ export class GameComponent implements OnInit {
         // Crear coleccionables
         const collectibles = this.physics.add.staticGroup();
         nivel1.collectibles.forEach((collectible: Collectible) => {
-            let color: number;
-            switch (collectible.type) {
-                case 'coin': color = 0xFFD700; break;
-                case 'powerUp': color = 0x00FFFF; break;
-                case 'healthPack': color = 0xFF69B4; break;
-                default: color = 0xFFFFFF;
-            }
-            collectibles.add(
-                this.add.circle(
-                    collectible.x * GAME_CONSTANTS.boxSize,
-                    GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize,
-                    GAME_CONSTANTS.boxSize / 4,
-                    color
-                )
+            const collectibleSprite = this.add.sprite(
+                collectible.x * GAME_CONSTANTS.boxSize,
+                GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize,
+                'starGold'
             );
+            collectibleSprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
+            collectibles.add(collectibleSprite);
+
         });
 
         // Crear obstáculos
         const obstacles = this.physics.add.staticGroup();
         const movingPlatforms = this.physics.add.group();
         nivel1.obstacles.forEach((obstacle: Obstacle) => {
-            let color: number;
-            switch (obstacle.type) {
-                case 'spikes': color = 0x808080; break;
-                case 'lava': color = 0xFF4500; break;
-                case 'movingPlatform': color = 0x8B4513; break;
-                default: color = 0xFFFFFF;
-            }
-            const obstacleSprite = this.add.rectangle(
-                (obstacle.x + obstacle.width / 2) * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.worldHeight - obstacle.y * GAME_CONSTANTS.boxSize,
-                obstacle.width * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.boxSize / 2,
-                color
-            );
+            if (obstacle.type === 'movingPlatform'){
+                const x = (obstacle.x + obstacle.width / 2) * GAME_CONSTANTS.boxSize;
+                const y = GAME_CONSTANTS.worldHeight - (obstacle.y + 0.5) * GAME_CONSTANTS.boxSize;
+                const width = obstacle.width * GAME_CONSTANTS.boxSize;
+                const height = GAME_CONSTANTS.boxSize;
 
-            if (obstacle.type === 'movingPlatform' && obstacle.patrolDistance) {
-                this.physics.add.existing(obstacleSprite);
+                const obstacleSprite = this.add.tileSprite(x, y, width, height, 'movingPlatform');
+                obstacleSprite.setOrigin(0.5, 0.5);
                 movingPlatforms.add(obstacleSprite);
-                const platformBody = obstacleSprite.body as Phaser.Physics.Arcade.Body;
-                platformBody.setImmovable(true);
-                platformBody.setAllowGravity(false);
+
+                const obstacleBody = obstacleSprite.body as Phaser.Physics.Arcade.Body;
+                obstacleBody.setSize(width, height);
+                obstacleBody.setImmovable(true);
+                obstacleBody.setAllowGravity(false);
 
                 this.tweens.add({
                     targets: obstacleSprite,
-                    y: `-=${obstacle.patrolDistance * GAME_CONSTANTS.boxSize}`,
+                    y: `-=${obstacle.patrolDistance! * GAME_CONSTANTS.boxSize}`,
                     duration: 2000,
                     ease: 'Linear',
                     yoyo: true,
                     repeat: -1
                 });
-            } else {
-                obstacles.add(obstacleSprite);
             }
+            else{
+                const x = (obstacle.x + obstacle.width / 2) * GAME_CONSTANTS.boxSize;
+                const y = GAME_CONSTANTS.worldHeight - (obstacle.y + 0.5) * GAME_CONSTANTS.boxSize;
+                const width = obstacle.width * GAME_CONSTANTS.boxSize;
+                const height = GAME_CONSTANTS.boxSize;
+
+                const obstacleSprite = this.add.rectangle(x, y, width, height, 0x808080);
+                obstacles.add(obstacleSprite);
+
+                const obstacleBody = obstacleSprite.body as Phaser.Physics.Arcade.StaticBody;
+                obstacleBody.setSize(width, height);
+                obstacleBody.updateFromGameObject();
+            }
+
         });
 
         // Configurar la cámara para seguir al jugador
@@ -257,7 +264,7 @@ export class GameComponent implements OnInit {
     }
 
     update(this: Phaser.Scene) {
-        const player = this.data.get('player') as Phaser.GameObjects.Rectangle;
+        const player = this.data.get('player') as Phaser.Physics.Arcade.Sprite;
         const cursors = this.data.get('cursors') as Phaser.Types.Input.Keyboard.CursorKeys;
         const playerBody = player.body as Phaser.Physics.Arcade.Body;
         const movingPlatforms = this.data.get('movingPlatforms') as Phaser.Physics.Arcade.Group;
@@ -269,11 +276,11 @@ export class GameComponent implements OnInit {
         // Movimiento del jugador
         if (cursors.left.isDown) {
             playerBody.setVelocityX(-460);
+            player.setFlipX(true);
         } else if (cursors.right.isDown) {
             playerBody.setVelocityX(460);
+            player.setFlipX(false);
         } else {
-            // Si el jugador no está presionando teclas de movimiento, 
-            // comprobamos si está sobre una plataforma móvil
             let onMovingPlatform = false;
             movingPlatforms.children.entries.forEach((platform: Phaser.GameObjects.GameObject) => {
                 const platformBody = platform.body as Phaser.Physics.Arcade.Body;
@@ -295,7 +302,14 @@ export class GameComponent implements OnInit {
 
         // Caída rápida con la flecha abajo
         if (cursors.down.isDown && !playerBody.touching.down) {
-            playerBody.setVelocityY(1500); // Aumenta la velocidad de caída
+            playerBody.setVelocityY(1500);
         }
+
+        // Actualizar la posición de los enemigos si es necesario
+        const enemies = this.data.get('enemies') as Phaser.Physics.Arcade.Group;
+        enemies.children.entries.forEach((enemy: Phaser.GameObjects.GameObject) => {
+            const enemyBody = enemy.body as Phaser.Physics.Arcade.Body;
+            // Aquí puedes agregar lógica adicional para el movimiento de los enemigos si es necesario
+        });
     }
 }

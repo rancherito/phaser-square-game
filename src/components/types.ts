@@ -10,12 +10,13 @@ export interface Platform {
 export interface Player {
     x: number;
     y: number;
+    texture: string;
 }
 
 export interface Enemy {
     x: number;
     y: number;
-    type: 'basic' | 'jumper' | 'flying';
+    type: 'jumper' | 'flying';
     patrolDistance?: number;
     jumpHeight?: number;
 }
@@ -23,13 +24,13 @@ export interface Enemy {
 export interface Collectible {
     x: number;
     y: number;
-    type: 'coin' | 'powerUp' | 'healthPack';
+    type: 'coin' | 'healthPack';
 }
 
 export interface Obstacle {
     x: number;
     y: number;
-    type: 'spikes' | 'lava' | 'movingPlatform';
+    type: 'spikes' | 'movingPlatform';
     width: number;
     patrolDistance?: number;
 }
