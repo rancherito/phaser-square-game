@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { GameComponent } from "../components/angular-phaser-game";
+import { GameComponent } from "../components/game.component";
 
 @Component({
   selector: 'app-root',
