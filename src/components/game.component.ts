@@ -79,7 +79,8 @@ export class GameComponent implements OnInit {
 
     preload(this: Phaser.Scene) {
         this.load.image('background', 'assets/backgrounds/' + nivel1.background + '.png');
-        this.load.image('player', 'assets/' + nivel1.player.texture + '.png');
+        this.load.image('heroA', 'assets/heroA.png');
+        this.load.image('heroB', 'assets/heroB.png');
         this.load.image('platform', 'assets/grass.png');
         this.load.image('movingPlatform', 'assets/moving-platform.png');
         this.load.image('starGold', 'assets/starGold.png');
@@ -133,10 +134,21 @@ export class GameComponent implements OnInit {
         const player = this.physics.add.sprite(
             nivel1.player.x * GAME_CONSTANTS.boxSize,
             GAME_CONSTANTS.worldHeight - nivel1.player.y * GAME_CONSTANTS.boxSize,
-            'player'
+            'heroA'
         );
-        player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 2);
+        player.setDisplaySize(GAME_CONSTANTS.boxSize * 2, GAME_CONSTANTS.boxSize * 1.5);
         player.texture.setFilter(Phaser.Textures.NEAREST);
+
+        // Create walking animation
+        this.anims.create({
+            key: 'walk',
+            frames: [
+                { key: 'heroA' },
+                { key: 'heroB' },
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
 
         const playerBody = player.body as Phaser.Physics.Arcade.Body;
         playerBody.setBounce(0.2);
@@ -196,7 +208,6 @@ export class GameComponent implements OnInit {
             );
             collectibleSprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
             collectibles.add(collectibleSprite);
-
         });
 
         // Crear obstáculos
@@ -240,7 +251,6 @@ export class GameComponent implements OnInit {
                 obstacleBody.setSize(width, height);
                 obstacleBody.updateFromGameObject();
             }
-
         });
 
         // Configurar la cámara para seguir al jugador
@@ -277,9 +287,11 @@ export class GameComponent implements OnInit {
         if (cursors.left.isDown) {
             playerBody.setVelocityX(-460);
             player.setFlipX(true);
+            player.play('walk', true);
         } else if (cursors.right.isDown) {
             playerBody.setVelocityX(460);
             player.setFlipX(false);
+            player.play('walk', true);
         } else {
             let onMovingPlatform = false;
             movingPlatforms.children.entries.forEach((platform: Phaser.GameObjects.GameObject) => {
@@ -293,6 +305,8 @@ export class GameComponent implements OnInit {
             if (!onMovingPlatform) {
                 playerBody.setVelocityX(0);
             }
+            player.stop();
+            player.setTexture('heroA');
         }
 
         // Salto con la flecha arriba o la barra espaciadora
