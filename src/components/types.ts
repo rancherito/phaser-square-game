@@ -23,16 +23,9 @@ export interface Enemy {
 export interface Collectible {
     x: number;
     y: number;
-    type: 'coin' | 'healthPack';
+    type: 'coin';
 }
 
-export interface Obstacle {
-    x: number;
-    y: number;
-    type: 'spikes' | 'movingPlatform';
-    width: number;
-    patrolDistance?: number;
-}
 
 export interface GameLevel {
     name: string;
@@ -40,6 +33,5 @@ export interface GameLevel {
     player: Player;
     enemies: Enemy[];
     collectibles: Collectible[];
-    obstacles: Obstacle[];
     background: string;
 }

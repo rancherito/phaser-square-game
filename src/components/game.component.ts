@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Phaser from 'phaser';
 import { GAME_CONSTANTS, nivel1 } from './levels';
-import { Enemy, Collectible, Obstacle } from './types';
+import { Enemy, Collectible } from './types';
 
 function collectItem(player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) {
     (item as Phaser.GameObjects.Rectangle).setVisible(false);
@@ -221,7 +221,7 @@ export class GameComponent implements OnInit {
         nivel1.collectibles.forEach((collectible: Collectible) => {
             const collectibleSprite = this.add.sprite(
                 collectible.x * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize,
+                GAME_CONSTANTS.worldHeight - (collectible.y * GAME_CONSTANTS.boxSize) - GAME_CONSTANTS.boxSize / 2,
                 'starGold'
             );
             collectibleSprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
@@ -231,45 +231,6 @@ export class GameComponent implements OnInit {
         // Crear obstáculos
         const obstacles = this.physics.add.staticGroup();
         const movingPlatforms = this.physics.add.group();
-        nivel1.obstacles.forEach((obstacle: Obstacle) => {
-            if (obstacle.type === 'movingPlatform') {
-                const x = (obstacle.x + obstacle.width / 2) * GAME_CONSTANTS.boxSize;
-                const y = GAME_CONSTANTS.worldHeight - (obstacle.y + 0.5) * GAME_CONSTANTS.boxSize;
-                const width = obstacle.width * GAME_CONSTANTS.boxSize;
-                const height = GAME_CONSTANTS.boxSize;
-
-                const obstacleSprite = this.add.tileSprite(x, y, width, height, 'movingPlatform');
-                obstacleSprite.setOrigin(0.5, 0.5);
-                movingPlatforms.add(obstacleSprite);
-
-                const obstacleBody = obstacleSprite.body as Phaser.Physics.Arcade.Body;
-                obstacleBody.setSize(width, height);
-                obstacleBody.setImmovable(true);
-                obstacleBody.setAllowGravity(false);
-
-                this.tweens.add({
-                    targets: obstacleSprite,
-                    y: `-=${obstacle.patrolDistance! * GAME_CONSTANTS.boxSize}`,
-                    duration: 2000,
-                    ease: 'Linear',
-                    yoyo: true,
-                    repeat: -1
-                });
-            }
-            else {
-                const x = (obstacle.x + obstacle.width / 2) * GAME_CONSTANTS.boxSize;
-                const y = GAME_CONSTANTS.worldHeight - (obstacle.y + 0.5) * GAME_CONSTANTS.boxSize;
-                const width = obstacle.width * GAME_CONSTANTS.boxSize;
-                const height = GAME_CONSTANTS.boxSize;
-
-                const obstacleSprite = this.add.rectangle(x, y, width, height, 0x808080);
-                obstacles.add(obstacleSprite);
-
-                const obstacleBody = obstacleSprite.body as Phaser.Physics.Arcade.StaticBody;
-                obstacleBody.setSize(width, height);
-                obstacleBody.updateFromGameObject();
-            }
-        });
 
         // Configurar la cámara para seguir al jugador
         this.cameras.main.setBounds(0, 0, GAME_CONSTANTS.worldWidth, GAME_CONSTANTS.worldHeight);

@@ -98,45 +98,18 @@ export const nivel1: GameLevel = {
     collectibles: [
         { x: 10, y: 5, type: 'coin' },
         { x: 100, y: 12, type: 'coin' },
-        { x: 160, y: 8, type: 'healthPack' },
         { x: 190, y: 6, type: 'coin' },
-        // Nuevos coleccionables
         { x: 250, y: 10, type: 'coin' },
-        { x: 310, y: 7, type: 'healthPack' },
         { x: 370, y: 13, type: 'coin' },
         { x: 430, y: 14, type: 'coin' },
-        { x: 490, y: 11, type: 'healthPack' },
         { x: 550, y: 15, type: 'coin' },
         { x: 610, y: 12, type: 'coin' },
-        { x: 670, y: 17, type: 'healthPack' },
         { x: 730, y: 18, type: 'coin' },
         { x: 790, y: 13, type: 'coin' },
-        { x: 850, y: 16, type: 'healthPack' },
         { x: 910, y: 20, type: 'coin' },
         { x: 970, y: 14, type: 'coin' },
-        { x: 1030, y: 19, type: 'healthPack' },
         { x: 1090, y: 22, type: 'coin' },
         { x: 1150, y: 17, type: 'coin' }
-    ],
-    obstacles: [
-        { x: 60, y: 2, type: 'spikes', width: 3 },
-        { x: 130, y: 15, type: 'spikes', width: 4 },
-        { x: 175, y: 6, type: 'movingPlatform', width: 3, patrolDistance: 4 },
-        // Nuevos obstáculos
-        { x: 230, y: 3, type: 'spikes', width: 4 },
-        { x: 300, y: 8, type: 'movingPlatform', width: 3, patrolDistance: 5 },
-        { x: 380, y: 4, type: 'spikes', width: 3 },
-        { x: 450, y: 10, type: 'movingPlatform', width: 4, patrolDistance: 6 },
-        { x: 520, y: 5, type: 'spikes', width: 4 },
-        { x: 590, y: 11, type: 'movingPlatform', width: 3, patrolDistance: 5 },
-        { x: 660, y: 6, type: 'spikes', width: 3 },
-        { x: 730, y: 12, type: 'movingPlatform', width: 4, patrolDistance: 7 },
-        { x: 800, y: 7, type: 'spikes', width: 4 },
-        { x: 870, y: 13, type: 'movingPlatform', width: 3, patrolDistance: 6 },
-        { x: 940, y: 8, type: 'spikes', width: 3 },
-        { x: 1010, y: 14, type: 'movingPlatform', width: 4, patrolDistance: 8 },
-        { x: 1080, y: 9, type: 'spikes', width: 4 },
-        { x: 1150, y: 15, type: 'movingPlatform', width: 3, patrolDistance: 7 }
     ],
     background: 'bg_forest'
 };
@@ -173,16 +146,8 @@ export const nivel2: GameLevel = {
     collectibles: [
         { x: 15, y: 6, type: 'coin', },
         { x: 100, y: 25, type: 'coin', },
-        { x: 145, y: 14, type: 'healthPack', },
         { x: 185, y: 6, type: 'coin', },
         { x: 275, y: 21, type: 'coin', },
-    ],
-    obstacles: [
-        { x: 70, y: 19, type: 'spikes', width: 4 },
-        { x: 120, y: 21, type: 'spikes', width: 5 },
-        { x: 180, y: 9, type: 'movingPlatform', width: 3, patrolDistance: 5 },
-        { x: 230, y: 11, type: 'spikes', width: 3 },
-        { x: 270, y: 17, type: 'movingPlatform', width: 4, patrolDistance: 6 }
     ],
     background: 'mountains'
 };
