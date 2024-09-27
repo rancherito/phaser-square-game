@@ -25,7 +25,7 @@ function handleFireDamage(player: Phaser.Physics.Arcade.Sprite, fire: Phaser.Gam
 
         if (playerData.health <= 0) {
             // Game over logic here
-            console.log('Game Over');
+            window.location.href = '/';
         }
     }
 }
