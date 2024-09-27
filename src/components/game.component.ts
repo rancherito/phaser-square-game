@@ -174,7 +174,7 @@ function create(this: Phaser.Scene) {
     // Set up timer for spawning falling fire
     this.time.delayedCall(2000, () => {
         this.time.addEvent({
-            delay: 1000,
+            delay: 200,
             callback: spawnFallingFire,
             callbackScope: this,
             loop: true,
@@ -349,6 +349,7 @@ export class GameComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.gameService.playMusic('assets/sounds/scape_2.mp3');
         const level = this.gameService.currentLevel() ?? (JSON.parse(localStorage.getItem('currentLevel') ?? 'null') as LevelData | null);
 
         if (!level) {
