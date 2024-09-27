@@ -1,14 +1,19 @@
 import { Routes } from '@angular/router';
 import { GameComponent } from '../components/game.component';
-import { InteractiveGridComponent } from '../components/grid.component';
+import { LevelEditorComponent } from '../components/level-editor.component';
+import { WelcomeComponent } from '../components/welcome.component';
 
 export const routes: Routes = [
     {
         path: '',
-        component: GameComponent
+        component: WelcomeComponent
     },
     {
         path: 'test',
-        component: InteractiveGridComponent
+        component: LevelEditorComponent
+    },
+    {
+        path: 'game',
+        component: GameComponent
     }
 ];

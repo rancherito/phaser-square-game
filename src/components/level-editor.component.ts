@@ -10,8 +10,6 @@ interface Point {
     y: number;
 }
 
-
-
 type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
 
 @Component({
@@ -128,7 +126,7 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
     }
   `]
 })
-export class InteractiveGridComponent implements AfterViewInit {
+export class LevelEditorComponent implements AfterViewInit {
     @ViewChild('gridContainer') gridContainer!: ElementRef;
 
     columns = signal(20);

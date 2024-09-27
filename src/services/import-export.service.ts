@@ -95,6 +95,13 @@ export class JsonImportExportService {
         );
     }
 
+    //getprojectPromise
+
+    getProjectPromise(projectId: string): Promise<LevelData | null> {
+        const projectRef = doc(collection(this.firestore, 'projects'), projectId);
+        return getDoc(projectRef).then(docSnapshot => docSnapshot.exists() ? docSnapshot.data() as LevelData : null);
+    }
+
     listProjects(): Observable<string[]> {
         const projectsRef = collection(this.firestore, 'projects');
         return from(getDocs(projectsRef)).pipe(
