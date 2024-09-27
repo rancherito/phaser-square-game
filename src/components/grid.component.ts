@@ -1,29 +1,15 @@
-import { Component, signal, computed, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, signal, computed, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Cell, JsonImportExportService, LevelData } from '../services/import-export.service';
 
-interface Cell {
-    x: number;
-    y: number;
-}
 
 interface Point {
     x: number;
     y: number;
 }
 
-interface OptimizedPlatform extends Cell {
-    width?: number;
-}
 
-interface LevelData {
-    name: string;
-    platforms: OptimizedPlatform[];
-    hero: Cell | null;
-    fire: Cell[];
-    stars: Cell[];
-    background: string;
-}
 
 type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
 
@@ -139,6 +125,8 @@ export class InteractiveGridComponent implements AfterViewInit {
     selectedEntity = signal<EntityType>('platform');
 
     gridWidth = computed(() => this.columns() * this.cellSize);
+    private jsonService: JsonImportExportService = inject(JsonImportExportService);
+
 
     ngAfterViewInit() {
         this.gridContainer.nativeElement.addEventListener('scroll', () => {
@@ -261,43 +249,21 @@ export class InteractiveGridComponent implements AfterViewInit {
     exportJSON() {
         const levelData: LevelData = {
             name: "New Level",
-            platforms: this.optimizePlatforms(this.platformCells()),
+            platforms: this.jsonService.optimizePlatforms(this.platformCells()),
             hero: this.heroCells()[0] || null,
             fire: this.fireCells(),
             stars: this.starCells(),
             background: "bg_forest"
         };
 
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(levelData));
+        const jsonString = this.jsonService.exportJSON(levelData);
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonString);
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
         downloadAnchorNode.setAttribute("download", "level.json");
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
-    }
-
-    optimizePlatforms(platforms: Cell[]): OptimizedPlatform[] {
-        const sortedPlatforms = platforms.sort((a, b) => a.y - b.y || a.x - b.x);
-        const optimizedPlatforms: OptimizedPlatform[] = [];
-        let currentPlatform: OptimizedPlatform | null = null;
-
-        for (const platform of sortedPlatforms) {
-            if (!currentPlatform || platform.y !== currentPlatform.y || platform.x !== currentPlatform.x + (currentPlatform.width || 1)) {
-                if (currentPlatform) {
-                    optimizedPlatforms.push(currentPlatform);
-                }
-                currentPlatform = { ...platform };
-            } else {
-                currentPlatform.width = (currentPlatform.width || 1) + 1;
-            }
-        }
-
-        if (currentPlatform) {
-            optimizedPlatforms.push(currentPlatform);
-        }
-
-        return optimizedPlatforms;
     }
 
     importJSON(event: Event) {
@@ -307,45 +273,24 @@ export class InteractiveGridComponent implements AfterViewInit {
             reader.onload = (e: ProgressEvent<FileReader>) => {
                 const content = e.target?.result as string;
                 try {
-                    const levelData: LevelData = JSON.parse(content);
-                    this.platformCells.set(this.expandOptimizedPlatforms(levelData.platforms));
+                    const levelData = this.jsonService.importJSON(content);
+                    this.platformCells.set(this.jsonService.expandOptimizedPlatforms(levelData.platforms));
                     this.heroCells.set(levelData.hero ? [levelData.hero] : []);
                     this.fireCells.set(levelData.fire);
                     this.starCells.set(levelData.stars);
 
-                    // Ajustar el número de columnas
-                    const maxX = this.getMaxX([
+                    const maxX = this.jsonService.getMaxX([
                         ...this.platformCells(),
                         ...this.heroCells(),
                         ...this.fireCells(),
                         ...this.starCells()
                     ]);
-                    this.updateColumns(Math.max(maxX + 1, 20));  // +1 porque las columnas empiezan en 0
-
-                    // You might want to update other properties like background here
+                    this.updateColumns(Math.max(maxX + 1, 20));
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);
+                    console.error('Error importing JSON:', error);
                 }
             };
             reader.readAsText(file);
         }
-    }
-
-    getMaxX(cells: Cell[]): number {
-        return cells.reduce((max, cell) => Math.max(max, cell.x), 0);
-    }
-
-    expandOptimizedPlatforms(platforms: OptimizedPlatform[]): Cell[] {
-        const expandedPlatforms: Cell[] = [];
-        for (const platform of platforms) {
-            if (platform.width) {
-                for (let i = 0; i < platform.width; i++) {
-                    expandedPlatforms.push({ x: platform.x + i, y: platform.y });
-                }
-            } else {
-                expandedPlatforms.push(platform);
-            }
-        }
-        return expandedPlatforms;
     }
 }
