@@ -40,7 +40,7 @@ function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, pl
 }
 
 function preload(this: Phaser.Scene) {
-    this.load.image('background', 'assets/backgrounds/' + nivel1!.background + '.png');
+    this.load.image('background', 'assets/backgrounds/' + gameLevel!.background + '.png');
     this.load.image('hero_walk_01', 'assets/hero_walk_01.png');
     this.load.image('hero_stop_01', 'assets/hero_stop_01.png');
     this.load.image('hero_walk_03', 'assets/hero_walk_03.png');
@@ -52,6 +52,23 @@ function preload(this: Phaser.Scene) {
         frameWidth: 105,
         frameHeight: 105,
     });
+}
+
+let xPositionFallinFire = 0;
+
+function spawnFallingFire(this: Phaser.Scene) {
+    const fallingFire = this.data.get('fallingFire') as Phaser.Physics.Arcade.Group;
+    const x = xPositionFallinFire * GAME_CONSTANTS.boxSize + GAME_CONSTANTS.boxSize / 2;
+
+    const fire = fallingFire.create(x, 0, 'fire') as Phaser.Physics.Arcade.Sprite;
+    fire.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
+    fire.play('fire');
+
+    const fireBody = fire.body as Phaser.Physics.Arcade.Body;
+    fireBody.setGravityY(2000);
+    fireBody.setSize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
+    fireBody.setAllowGravity(true);
+    xPositionFallinFire = (xPositionFallinFire + 1) % (GAME_CONSTANTS.worldWidth / GAME_CONSTANTS.boxSize);
 }
 
 function create(this: Phaser.Scene) {
@@ -74,15 +91,13 @@ function create(this: Phaser.Scene) {
     // Crear plataformas
     const platforms = this.physics.add.staticGroup();
 
-    nivel1!.platforms.forEach((platform) => {
+    gameLevel!.platforms.forEach((platform) => {
         const platformWidth = platform.width * GAME_CONSTANTS.boxSize;
         const platformHeight = GAME_CONSTANTS.boxSize;
         const x = (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize;
         const y = GAME_CONSTANTS.worldHeight - (platform.y + 1 / 2) * GAME_CONSTANTS.boxSize;
 
         const platformSprite = this.add.tileSprite(x, y, platformWidth, platformHeight, 'platform');
-        //platformSprite.setOrigin(0.5, 0.5);
-
         platforms.add(platformSprite);
 
         const platformBody = platformSprite.body as Phaser.Physics.Arcade.StaticBody;
@@ -93,7 +108,7 @@ function create(this: Phaser.Scene) {
     this.data.set('playerData', { health: GLOBAL_SERVICES!.maxLife, lastDamageTime: 0 });
 
     // Crear jugador con textura
-    const player = this.physics.add.sprite(nivel1!.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - nivel1!.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
+    const player = this.physics.add.sprite(gameLevel!.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - gameLevel!.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
     player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 1.5);
     player.texture.setFilter(Phaser.Textures.NEAREST);
 
@@ -112,14 +127,14 @@ function create(this: Phaser.Scene) {
     });
 
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
-     playerBody.setCollideWorldBounds(true);
+    playerBody.setCollideWorldBounds(true);
 
     // Agregar colisiones
     this.physics.add.collider(player, platforms);
 
     // Crear enemigos
     const enemies = this.physics.add.staticGroup();
-    nivel1!.fire.forEach((enemy: Fire) => {
+    gameLevel!.fire.forEach((enemy: Fire) => {
         let enemySprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
 
         enemySprite = this.add.sprite(enemy.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - GAME_CONSTANTS.boxSize / 2 - GAME_CONSTANTS.boxSize, 'fire');
@@ -131,7 +146,7 @@ function create(this: Phaser.Scene) {
 
     // Crear coleccionables
     const collectibles = this.physics.add.staticGroup();
-    nivel1!.stars.forEach((collectible: Collectible) => {
+    gameLevel!.stars.forEach((collectible: Collectible) => {
         const collectibleSprite = this.add.sprite(collectible.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize - GAME_CONSTANTS.boxSize / 2, 'starGold');
         collectibleSprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
         collectibles.add(collectibleSprite);
@@ -152,6 +167,26 @@ function create(this: Phaser.Scene) {
     this.physics.add.overlap(player, collectibles, collectItem as any, undefined, this);
     this.physics.add.overlap(player, enemies, handleFireDamage as any, undefined, this);
 
+    // Create a group for falling fire
+    const fallingFire = this.physics.add.group();
+    this.data.set('fallingFire', fallingFire);
+
+    // Set up timer for spawning falling fire
+    this.time.delayedCall(2000, () => {
+        this.time.addEvent({
+            delay: 1000,
+            callback: spawnFallingFire,
+            callbackScope: this,
+            loop: true,
+        });
+    });
+
+    // Add collision between falling fire and platforms
+    this.physics.add.collider(fallingFire, platforms);
+
+    // Add collision between player and falling fire
+    this.physics.add.overlap(player, fallingFire, handleFireDamage as any, undefined, this);
+
     // Guardar referencias para usar en update
     this.data.set('player', player);
     this.data.set('cursors', this.input.keyboard?.createCursorKeys());
@@ -167,12 +202,16 @@ function update(this: Phaser.Scene) {
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
     const movingPlatforms = this.data.get('movingPlatforms') as Phaser.Physics.Arcade.Group;
     const background = this.data.get('background') as Phaser.GameObjects.TileSprite;
-
+    const fallingFire = this.data.get('fallingFire') as Phaser.Physics.Arcade.Group;
     // Update background position based on camera movement
     background.tilePositionX = this.cameras.main.scrollX * 0.6;
 
     // Check if player is in the air
     const isInAir = !playerBody.touching.down;
+    const isOnFire = fallingFire.children.entries.some((fire: Phaser.GameObjects.GameObject) => {
+        const fireBody = fire.body as Phaser.Physics.Arcade.Body;
+        return playerBody.bottom === fireBody.top && playerBody.right > fireBody.left && playerBody.left < fireBody.right;
+    });
 
     // Player movement
     if (cursors.left.isDown) {
@@ -222,15 +261,27 @@ function update(this: Phaser.Scene) {
         playerBody.setVelocityY(1500);
     }
 
+    if ((cursors.up.isDown || cursors.space?.isDown) && playerBody.touching.down && !isOnFire) {
+        playerBody.setVelocityY(-1200);
+    }
+
     // Update enemy positions if necessary
     const enemies = this.data.get('enemies') as Phaser.Physics.Arcade.Group;
     enemies.children.entries.forEach((enemy: Phaser.GameObjects.GameObject) => {
         const enemyBody = enemy.body as Phaser.Physics.Arcade.Body;
         // Add additional logic for enemy movement if needed
     });
+
+    // Update falling fire
+    fallingFire.children.entries.forEach((fire: Phaser.GameObjects.GameObject) => {
+        const fireBody = fire.body as Phaser.Physics.Arcade.Body;
+        if (fireBody.y > GAME_CONSTANTS.worldHeight) {
+            fallingFire.remove(fire, true, true);
+        }
+    });
 }
 
-let nivel1: GameLevel | null = null;
+let gameLevel: GameLevel | null = null;
 @Component({
     selector: 'app-game',
     standalone: true,
@@ -307,7 +358,7 @@ export class GameComponent implements OnInit {
 
         localStorage.setItem('currentLevel', JSON.stringify(level));
 
-        nivel1 = {
+        gameLevel = {
             background: level.background,
             fire: level.fire,
             hero: level.hero!,
