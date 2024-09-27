@@ -16,9 +16,8 @@ export interface Player {
 export interface Enemy {
     x: number;
     y: number;
-    type: 'jumper' | 'flying';
-    patrolDistance?: number;
-    jumpHeight?: number;
+    type: 'fire';
+    scale: number
 }
 
 export interface Collectible {

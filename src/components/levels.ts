@@ -27,7 +27,6 @@ export const nivel1: GameLevel = {
         { x: 165, y: 7, width: 3, height: 1 },
         { x: 180, y: 5, width: 5, height: 1 },
         { x: 195, y: 3, width: 4, height: 1 },
-        // Nuevas plataformas
         { x: 220, y: 6, width: 4, height: 1 },
         { x: 240, y: 8, width: 3, height: 1 },
         { x: 260, y: 10, width: 5, height: 1 },
@@ -80,22 +79,21 @@ export const nivel1: GameLevel = {
     ],
     player: { x: 1, y: 3, texture: 'player' },
     enemies: [
-        { x: 30, y: 8, type: 'jumper', patrolDistance: 5 },
-        { x: 80, y: 5, type: 'jumper', jumpHeight: 4 },
-        { x: 140, y: 12, type: 'flying', patrolDistance: 8 },
-        // Nuevos enemigos
-        { x: 200, y: 7, type: 'jumper', patrolDistance: 6 },
-        { x: 280, y: 11, type: 'flying', patrolDistance: 7 },
-        { x: 350, y: 12, type: 'jumper', jumpHeight: 5 },
-        { x: 420, y: 13, type: 'flying', patrolDistance: 9 },
-        { x: 500, y: 14, type: 'jumper', patrolDistance: 7 },
-        { x: 580, y: 15, type: 'flying', patrolDistance: 8 },
-        { x: 660, y: 16, type: 'jumper', jumpHeight: 6 },
-        { x: 740, y: 17, type: 'flying', patrolDistance: 10 },
-        { x: 820, y: 18, type: 'jumper', patrolDistance: 8 },
-        { x: 900, y: 19, type: 'flying', patrolDistance: 9 },
-        { x: 980, y: 20, type: 'jumper', jumpHeight: 7 },
-        { x: 1060, y: 21, type: 'flying', patrolDistance: 11 }
+        { x: 30, y: 1, type: 'fire', scale: 1 },
+        { x: 80, y: 1, type: 'fire', scale: 2 },
+        { x: 140, y: 1, type: 'fire', scale: 3 },
+        { x: 200, y: 1, type: 'fire', scale: 1 },
+        { x: 280, y: 1, type: 'fire', scale: 2 },
+        { x: 350, y: 1, type: 'fire', scale: 3 },
+        { x: 420, y: 1, type: 'fire', scale: 1 },
+        { x: 500, y: 1, type: 'fire', scale: 2 },
+        { x: 580, y: 1, type: 'fire', scale: 3 },
+        { x: 660, y: 1, type: 'fire', scale: 1 },
+        { x: 740, y: 1, type: 'fire', scale: 2 },
+        { x: 820, y: 1, type: 'fire', scale: 3 },
+        { x: 900, y: 1, type: 'fire', scale: 1 },
+        { x: 980, y: 1, type: 'fire', scale: 2 },
+        { x: 1060, y: 1, type: 'fire', scale: 3 }
     ],
     collectibles: [
         { x: 10, y: 5, type: 'coin' },
@@ -166,11 +164,11 @@ export const nivel2: GameLevel = {
     ],
     player: { x: 1, y: 3, texture: 'player2' }, // jugador
     enemies: [
-        { x: 40, y: 13, type: 'jumper', jumpHeight: 5 },
-        { x: 85, y: 22, type: 'flying', patrolDistance: 10 },
-        { x: 140, y: 17, type: 'jumper', patrolDistance: 6 },
-        { x: 200, y: 5, type: 'jumper', jumpHeight: 6 },
-        { x: 250, y: 17, type: 'flying', patrolDistance: 12 }
+        { x: 40, y: 13, type: 'fire', scale: 2 },
+        { x: 85, y: 22, type: 'fire', scale: 3 },
+        { x: 140, y: 17, type: 'fire', scale: 1 },
+        { x: 200, y: 5, type: 'fire', scale: 2 },
+        { x: 250, y: 17, type: 'fire', scale: 3 }
     ],
     collectibles: [
         { x: 15, y: 6, type: 'coin', },
