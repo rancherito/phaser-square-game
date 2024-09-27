@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Phaser from 'phaser';
 import { GAME_CONSTANTS, nivel1 } from './levels';
-import { Enemy, Collectible } from './types';
+import { Fire, Collectible } from './types';
 
 function collectItem(player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) {
     (item as Phaser.GameObjects.Rectangle).setVisible(false);
@@ -141,9 +141,9 @@ export class GameComponent implements OnInit {
 
         nivel1.platforms.forEach(platform => {
             const platformWidth = platform.width * GAME_CONSTANTS.boxSize;
-            const platformHeight = platform.height * GAME_CONSTANTS.boxSize;
+            const platformHeight = GAME_CONSTANTS.boxSize;
             const x = (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize;
-            const y = GAME_CONSTANTS.worldHeight - (platform.y + platform.height / 2) * GAME_CONSTANTS.boxSize;
+            const y = GAME_CONSTANTS.worldHeight - (platform.y + 1 / 2) * GAME_CONSTANTS.boxSize;
 
             const platformSprite = this.add.tileSprite(x, y, platformWidth, platformHeight, 'platform');
             //platformSprite.setOrigin(0.5, 0.5);
@@ -167,8 +167,8 @@ export class GameComponent implements OnInit {
 
         // Crear jugador con textura
         const player = this.physics.add.sprite(
-            nivel1.player.x * GAME_CONSTANTS.boxSize,
-            GAME_CONSTANTS.worldHeight - nivel1.player.y * GAME_CONSTANTS.boxSize,
+            nivel1.hero.x * GAME_CONSTANTS.boxSize,
+            GAME_CONSTANTS.worldHeight - nivel1.hero.y * GAME_CONSTANTS.boxSize,
             'hero_walk_02'
         );
         player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 1.5);
@@ -202,15 +202,15 @@ export class GameComponent implements OnInit {
 
         // Crear enemigos
         const enemies = this.physics.add.staticGroup();
-        nivel1.enemies.forEach((enemy: Enemy) => {
+        nivel1.fire.forEach((enemy: Fire) => {
             let enemySprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
 
             enemySprite = this.add.sprite(
                 enemy.x * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.worldHeight - ((GAME_CONSTANTS.boxSize * enemy.scale) / 2) - GAME_CONSTANTS.boxSize,
+                GAME_CONSTANTS.worldHeight - ((GAME_CONSTANTS.boxSize) / 2) - GAME_CONSTANTS.boxSize,
                 'fire'
             );
-            enemySprite.setDisplaySize(GAME_CONSTANTS.boxSize * enemy.scale, GAME_CONSTANTS.boxSize * enemy.scale);
+            enemySprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
             enemySprite.play('fire');
 
             enemies.add(enemySprite);
@@ -218,7 +218,7 @@ export class GameComponent implements OnInit {
 
         // Crear coleccionables
         const collectibles = this.physics.add.staticGroup();
-        nivel1.collectibles.forEach((collectible: Collectible) => {
+        nivel1.stars.forEach((collectible: Collectible) => {
             const collectibleSprite = this.add.sprite(
                 collectible.x * GAME_CONSTANTS.boxSize,
                 GAME_CONSTANTS.worldHeight - (collectible.y * GAME_CONSTANTS.boxSize) - GAME_CONSTANTS.boxSize / 2,
