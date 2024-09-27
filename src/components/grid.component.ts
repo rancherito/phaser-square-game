@@ -2,6 +2,7 @@ import { Component, signal, computed, ViewChild, ElementRef, AfterViewInit, inje
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Cell, JsonImportExportService, LevelData } from '../services/import-export.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 interface Point {
@@ -73,11 +74,13 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
         </div>
         <div class="mb-4">
           <button (click)="loadProjects()" class="w-full p-2 mb-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Cargar Proyectos</button>
-          <select [(ngModel)]="selectedProject" class="w-full p-2 mb-2 border border-gray-300 rounded">
+          <select [(ngModel)]="selectedProject" class="w-full p-2 mb-2 border border-gray-300 rounded" (ngModelChange)="loadProject()">
             <option value="">Seleccionar proyecto</option>
-            <option *ngFor="let project of projects" [value]="project">{{project}}</option>
+            <!-- <option *ngFor="let project of projects" [value]="project">{{project}}</option> -->
+             @for (project of projects; track $index) {
+                <option [value]="project">{{project}}</option>  
+             }
           </select>
-          <button (click)="loadProject()" [disabled]="!selectedProject" class="w-full p-2 mb-2 bg-blue-500 text-white rounded hover:bg-blue-600" [class.opacity-50]="!selectedProject">Cargar Proyecto</button>
           <button (click)="deleteProject()" [disabled]="!selectedProject" class="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600" [class.opacity-50]="!selectedProject">Eliminar Proyecto</button>
         </div>
       </div>
@@ -87,7 +90,7 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
     
     .grid-container {
       overflow-x: auto;
-      width: calc(100% - 200px);
+      width: calc(100% - 300px);
       border: 1px solid black;
     }
     .grilla {
@@ -113,7 +116,7 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
     .fire { background-color: red; }
     .star { background-color: yellow; }
     .panel {
-      width: 200px;
+      width: 300px;
       padding: 10px;
     }
     button {
@@ -146,7 +149,7 @@ export class InteractiveGridComponent implements AfterViewInit {
 
     gridWidth = computed(() => this.columns() * this.cellSize);
     private jsonService: JsonImportExportService = inject(JsonImportExportService);
-
+    private toastsService: ToastrService = inject(ToastrService);
     ngAfterViewInit() {
         this.gridContainer.nativeElement.addEventListener('scroll', () => {
             this.heroCells.update(cells => [...cells]);
@@ -154,6 +157,7 @@ export class InteractiveGridComponent implements AfterViewInit {
             this.fireCells.update(cells => [...cells]);
             this.starCells.update(cells => [...cells]);
         });
+        this.loadProjects();
     }
 
     handleMouseDown(event: MouseEvent) {
@@ -315,7 +319,8 @@ export class InteractiveGridComponent implements AfterViewInit {
 
     saveProject() {
         if (!this.projectName) {
-            alert('Por favor, ingrese un nombre para el proyecto');
+            // alert('Por favor, ingrese un nombre para el proyecto');
+            this.toastsService.error('Por favor, ingrese un nombre para el proyecto');
             return;
         }
 
@@ -330,25 +335,21 @@ export class InteractiveGridComponent implements AfterViewInit {
 
         this.jsonService.saveProject(this.projectName, levelData)
             .then(() => {
-                alert('Proyecto guardado exitosamente');
+                // alert('Proyecto guardado exitosamente');
+                this.toastsService.success('Proyecto guardado exitosamente');
                 this.loadProjects();
             })
             .catch(error => {
                 console.error('Error al guardar el proyecto:', error);
-                alert('Error al guardar el proyecto');
+                // alert('Error al guardar el proyecto');
+                this.toastsService.error('Error al guardar el proyecto');
             });
     }
 
     loadProjects() {
-        this.jsonService.listProjects().subscribe(
-            projects => {
-                this.projects = projects;
-            },
-            error => {
-                console.error('Error al cargar la lista de proyectos:', error);
-                alert('Error al cargar la lista de proyectos');
-            }
-        );
+        this.jsonService.listProjects().subscribe(projectNames => {
+            this.projects = projectNames;
+        });
     }
 
     loadProject() {
@@ -369,14 +370,17 @@ export class InteractiveGridComponent implements AfterViewInit {
                         ...this.starCells()
                     ]);
                     this.updateColumns(Math.max(maxX + 1, 20));
-                    alert('Proyecto cargado exitosamente');
+                    // alert('Proyecto cargado exitosamente');
+                    this.toastsService.success('Proyecto cargado exitosamente');
                 } else {
-                    alert('Proyecto no encontrado');
+                    // alert('Proyecto no encontrado');
+                    this.toastsService.error('Proyecto no encontrado');
                 }
             },
             error => {
                 console.error('Error al cargar el proyecto:', error);
-                alert('Error al cargar el proyecto');
+                // alert('Error al cargar el proyecto');
+                this.toastsService.error('Error al cargar el proyecto');
             }
         );
     }
@@ -387,13 +391,15 @@ export class InteractiveGridComponent implements AfterViewInit {
         if (confirm(`¿Está seguro de que desea eliminar el proyecto "${this.selectedProject}"?`)) {
             this.jsonService.deleteProject(this.selectedProject)
                 .then(() => {
-                    alert('Proyecto eliminado exitosamente');
+                    // alert('Proyecto eliminado exitosamente');
+                    this.toastsService.success('Proyecto eliminado exitosamente');
                     this.loadProjects();
                     this.selectedProject = '';
                 })
                 .catch(error => {
                     console.error('Error al eliminar el proyecto:', error);
-                    alert('Error al eliminar el proyecto');
+                    // alert('Error al eliminar el proyecto');
+                    this.toastsService.error('Error al eliminar el proyecto');
                 });
         }
     }
