@@ -12,9 +12,13 @@ interface Point {
     y: number;
 }
 
+interface OptimizedPlatform extends Cell {
+    width?: number;
+}
+
 interface LevelData {
     name: string;
-    platforms: Cell[];
+    platforms: OptimizedPlatform[];
     hero: Cell | null;
     fire: Cell[];
     stars: Cell[];
@@ -87,14 +91,13 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
     .grid {
       position: relative;
       height: 1200px;
-      //create a background tiled 60x60, similar como si estubise transparente
-      background-color: #ccc; /* Color de fondo general */
-  background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), 
-                    linear-gradient(-45deg, #ddd 25%, transparent 25%), 
-                    linear-gradient(45deg, transparent 75%, #ddd 75%), 
-                    linear-gradient(-45deg, transparent 75%, #ddd 75%);
-                    background-size: 120px 120px; /* Tamaño de los cuadrados */
-                    background-position: 0 0, 0 60px, 60px -60px, -60px 0px;
+      background-color: #ccc;
+      background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), 
+                        linear-gradient(-45deg, #ddd 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #ddd 75%), 
+                        linear-gradient(-45deg, transparent 75%, #ddd 75%);
+      background-size: 120px 120px;
+      background-position: 0 0, 0 60px, 60px -60px, -60px 0px;
     }
     .cell {
       position: absolute;
@@ -258,7 +261,7 @@ export class InteractiveGridComponent implements AfterViewInit {
     exportJSON() {
         const levelData: LevelData = {
             name: "New Level",
-            platforms: this.platformCells(),
+            platforms: this.optimizePlatforms(this.platformCells()),
             hero: this.heroCells()[0] || null,
             fire: this.fireCells(),
             stars: this.starCells(),
@@ -274,6 +277,29 @@ export class InteractiveGridComponent implements AfterViewInit {
         downloadAnchorNode.remove();
     }
 
+    optimizePlatforms(platforms: Cell[]): OptimizedPlatform[] {
+        const sortedPlatforms = platforms.sort((a, b) => a.y - b.y || a.x - b.x);
+        const optimizedPlatforms: OptimizedPlatform[] = [];
+        let currentPlatform: OptimizedPlatform | null = null;
+
+        for (const platform of sortedPlatforms) {
+            if (!currentPlatform || platform.y !== currentPlatform.y || platform.x !== currentPlatform.x + (currentPlatform.width || 1)) {
+                if (currentPlatform) {
+                    optimizedPlatforms.push(currentPlatform);
+                }
+                currentPlatform = { ...platform };
+            } else {
+                currentPlatform.width = (currentPlatform.width || 1) + 1;
+            }
+        }
+
+        if (currentPlatform) {
+            optimizedPlatforms.push(currentPlatform);
+        }
+
+        return optimizedPlatforms;
+    }
+
     importJSON(event: Event) {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
@@ -282,10 +308,20 @@ export class InteractiveGridComponent implements AfterViewInit {
                 const content = e.target?.result as string;
                 try {
                     const levelData: LevelData = JSON.parse(content);
-                    this.platformCells.set(levelData.platforms);
+                    this.platformCells.set(this.expandOptimizedPlatforms(levelData.platforms));
                     this.heroCells.set(levelData.hero ? [levelData.hero] : []);
                     this.fireCells.set(levelData.fire);
                     this.starCells.set(levelData.stars);
+
+                    // Ajustar el número de columnas
+                    const maxX = this.getMaxX([
+                        ...this.platformCells(),
+                        ...this.heroCells(),
+                        ...this.fireCells(),
+                        ...this.starCells()
+                    ]);
+                    this.updateColumns(Math.max(maxX + 1, 20));  // +1 porque las columnas empiezan en 0
+
                     // You might want to update other properties like background here
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
@@ -293,5 +329,23 @@ export class InteractiveGridComponent implements AfterViewInit {
             };
             reader.readAsText(file);
         }
+    }
+
+    getMaxX(cells: Cell[]): number {
+        return cells.reduce((max, cell) => Math.max(max, cell.x), 0);
+    }
+
+    expandOptimizedPlatforms(platforms: OptimizedPlatform[]): Cell[] {
+        const expandedPlatforms: Cell[] = [];
+        for (const platform of platforms) {
+            if (platform.width) {
+                for (let i = 0; i < platform.width; i++) {
+                    expandedPlatforms.push({ x: platform.x + i, y: platform.y });
+                }
+            } else {
+                expandedPlatforms.push(platform);
+            }
+        }
+        return expandedPlatforms;
     }
 }
