@@ -130,7 +130,7 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
 export class LevelEditorComponent implements AfterViewInit {
     @ViewChild('gridContainer') gridContainer!: ElementRef;
 
-    columns = signal(20);
+    columns = signal(100);
     rows = signal(20);
     cellSize = 60;
     heroCells = signal<Cell[]>([]);

@@ -21,22 +21,13 @@ function handleFireDamage(player: Phaser.Physics.Arcade.Sprite, fire: Phaser.Gam
         // 2 seconds cooldown
         playerData.health = Math.max(0, playerData.health - 1);
         playerData.lastDamageTime = currentTime;
-        updateHealthBar(scene, playerData.health);
+        GLOBAL_SERVICES?.heroLife.set(playerData.health);
 
         if (playerData.health <= 0) {
             // Game over logic here
             console.log('Game Over');
         }
     }
-}
-
-function updateHealthBar(scene: Phaser.Scene, health: number) {
-    console.log('Updating health bar', health);
-    GLOBAL_SERVICES?.heroLife.set(health);
-    const healthBar = scene.data.get('healthBar') as Phaser.GameObjects.Group;
-    healthBar.children.entries.forEach((slot: any, index: number) => {
-        slot.fillColor = index < health ? 0x00ff00 : 0xff0000;
-    });
 }
 
 function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, platform: Phaser.GameObjects.GameObject) {
@@ -99,15 +90,7 @@ function create(this: Phaser.Scene) {
         platformBody.updateFromGameObject();
     });
 
-    // Create health bar
-    const healthBar = this.add.group();
-    for (let i = 0; i < 5; i++) {
-        const slot = this.add.rectangle(10 + i * 30, 10, 25, 25, 0x00ff00);
-        slot.setScrollFactor(0); // Keep it fixed on screen
-        healthBar.add(slot);
-    }
-    this.data.set('healthBar', healthBar);
-    this.data.set('playerData', { health: 5, lastDamageTime: 0 });
+    this.data.set('playerData', { health: GLOBAL_SERVICES!.maxLife, lastDamageTime: 0 });
 
     // Crear jugador con textura
     const player = this.physics.add.sprite(nivel1!.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - nivel1!.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
@@ -129,8 +112,7 @@ function create(this: Phaser.Scene) {
     });
 
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
-    playerBody.setBounce(0.2);
-    playerBody.setCollideWorldBounds(true);
+     playerBody.setCollideWorldBounds(true);
 
     // Agregar colisiones
     this.physics.add.collider(player, platforms);
@@ -255,7 +237,13 @@ let nivel1: GameLevel | null = null;
     imports: [CommonModule],
     template: `
         <div class="helpers-ui">
-            <span>Vidas: {{ gameService.heroLife() }}</span>
+            @for (item of this.gameService.stateLife(); track $index) {
+                @if (item === 1) {
+                    <img class="heart-alive" src="/assets/heart.svg" />
+                } @else {
+                    <img src="/assets/heart-dead.svg" />
+                }
+            }
         </div>
         <div id="gameContainer"></div>
     `,
@@ -278,6 +266,24 @@ let nivel1: GameLevel | null = null;
                 top: 0;
                 right: 0;
                 z-index: 10;
+                display: flex;
+                gap: 0.5rem;
+            }
+            img {
+                width: 50x;
+                height: 50px;
+            }
+            //animate heart-alive rotate infinite
+            .heart-alive {
+                animation: rotate 4s infinite linear;
+            }
+            @keyframes rotate {
+                from {
+                    transform: rotateY(0deg);
+                }
+                to {
+                    transform: rotateY(360deg);
+                }
             }
         `,
     ],
@@ -292,7 +298,7 @@ export class GameComponent implements OnInit {
     }
 
     ngOnInit() {
-        const level = this.gameService.currentLevel() ?? (JSON.parse(localStorage.getItem('currentLevel') ?? 'null') as LevelData | null)
+        const level = this.gameService.currentLevel() ?? (JSON.parse(localStorage.getItem('currentLevel') ?? 'null') as LevelData | null);
 
         if (!level) {
             this.router.navigate(['/']);
