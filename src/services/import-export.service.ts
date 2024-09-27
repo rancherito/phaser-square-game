@@ -1,16 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
-import { LevelData, Cell, OptimizedPlatform } from '../components/types';
+import { LevelData, Cell, Platform } from './types';
 
 
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class JsonImportExportService {
     private firestore: Firestore = inject(Firestore);
-    constructor() { }
+    constructor() {}
 
     exportJSON(levelData: LevelData): string {
         return JSON.stringify(levelData);
@@ -26,17 +26,17 @@ export class JsonImportExportService {
         }
     }
 
-    optimizePlatforms(platforms: Cell[]): OptimizedPlatform[] {
+    optimizePlatforms(platforms: Cell[]): Platform[] {
         const sortedPlatforms = platforms.sort((a, b) => a.y - b.y || a.x - b.x);
-        const optimizedPlatforms: OptimizedPlatform[] = [];
-        let currentPlatform: OptimizedPlatform | null = null;
+        const optimizedPlatforms: Platform[] = [];
+        let currentPlatform: Platform | null = null;
 
         for (const platform of sortedPlatforms) {
             if (!currentPlatform || platform.y !== currentPlatform.y || platform.x !== currentPlatform.x + (currentPlatform.width || 1)) {
                 if (currentPlatform) {
                     optimizedPlatforms.push(currentPlatform);
                 }
-                currentPlatform = { ...platform };
+                currentPlatform = { ...platform, width: 1 };
             } else {
                 currentPlatform.width = (currentPlatform.width || 1) + 1;
             }
@@ -49,7 +49,7 @@ export class JsonImportExportService {
         return optimizedPlatforms;
     }
 
-    expandOptimizedPlatforms(platforms: OptimizedPlatform[]): Cell[] {
+    expandOptimizedPlatforms(platforms: Platform[]): Cell[] {
         const expandedPlatforms: Cell[] = [];
         for (const platform of platforms) {
             if (platform.width) {
@@ -67,7 +67,6 @@ export class JsonImportExportService {
         return cells.reduce((max, cell) => Math.max(max, cell.x), 0);
     }
 
-
     saveProject(projectId: string, levelData: LevelData): Promise<void> {
         const projectRef = doc(collection(this.firestore, 'projects'), projectId);
         return setDoc(projectRef, levelData);
@@ -75,23 +74,19 @@ export class JsonImportExportService {
 
     getProject(projectId: string): Observable<LevelData | null> {
         const projectRef = doc(collection(this.firestore, 'projects'), projectId);
-        return from(getDoc(projectRef)).pipe(
-            map(docSnapshot => docSnapshot.exists() ? docSnapshot.data() as LevelData : null)
-        );
+        return from(getDoc(projectRef)).pipe(map((docSnapshot) => (docSnapshot.exists() ? (docSnapshot.data() as LevelData) : null)));
     }
 
     //getprojectPromise
 
     getProjectPromise(projectId: string): Promise<LevelData | null> {
         const projectRef = doc(collection(this.firestore, 'projects'), projectId);
-        return getDoc(projectRef).then(docSnapshot => docSnapshot.exists() ? docSnapshot.data() as LevelData : null);
+        return getDoc(projectRef).then((docSnapshot) => (docSnapshot.exists() ? (docSnapshot.data() as LevelData) : null));
     }
 
     listProjects(): Observable<string[]> {
         const projectsRef = collection(this.firestore, 'projects');
-        return from(getDocs(projectsRef)).pipe(
-            map(snapshot => snapshot.docs.map(doc => doc.id))
-        );
+        return from(getDocs(projectsRef)).pipe(map((snapshot) => snapshot.docs.map((doc) => doc.id)));
     }
 
     deleteProject(projectId: string): Promise<void> {

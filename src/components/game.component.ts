@@ -1,8 +1,8 @@
 import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Phaser from 'phaser';
-import { GAME_CONSTANTS, nivel1 } from './levels';
-import { Fire, Collectible, GameLevel } from './types';
+import { GAME_CONSTANTS } from '../services/levels';
+import { Fire, Collectible, GameLevel } from '../services/types';
 import { GameService } from '../services/game.service';
 import { Router } from '@angular/router';
 
@@ -43,7 +43,8 @@ function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, pl
         playerBody.setVelocityX(platformBody.velocity.x);
     }
 }
-
+    
+let nivel1: GameLevel | null = null;
 @Component({
     selector: 'app-game',
     standalone: true,
@@ -72,21 +73,25 @@ export class GameComponent implements OnInit {
     private router = inject(Router);
     constructor(private el: ElementRef) {}
 
-    levelData : GameLevel | null = null;
-    component = this;
 
     ngOnInit() {
         console.log(this.gameService.currentLevel());
 
+        const level = this.gameService.currentLevel();
 
-        if (!this.gameService.currentLevel()) {
+        if (!level) {
             this.router.navigate(['/']);
             return;
         }
 
-        // this.levelData = {
-        //     ...this.gameService.currentLevel(),
-        // };
+        nivel1 = {
+            background: level.background,
+            fire: level.fire,
+            hero: level.hero!,
+            name: level.name,
+            platforms: level.platforms,
+            stars: level.stars,
+        };
         
 
         const config: Phaser.Types.Core.GameConfig = {
@@ -119,7 +124,7 @@ export class GameComponent implements OnInit {
     }
 
     preload(this: Phaser.Scene) {
-        this.load.image('background', 'assets/backgrounds/' + nivel1.background + '.png');
+        this.load.image('background', 'assets/backgrounds/' + nivel1!.background + '.png');
         this.load.image('hero_walk_01', 'assets/hero_walk_01.png');
         this.load.image('hero_stop_01', 'assets/hero_stop_01.png');
         this.load.image('hero_walk_03', 'assets/hero_walk_03.png');
@@ -153,7 +158,7 @@ export class GameComponent implements OnInit {
         // Crear plataformas
         const platforms = this.physics.add.staticGroup();
 
-        nivel1.platforms.forEach((platform) => {
+        nivel1!.platforms.forEach((platform) => {
             const platformWidth = platform.width * GAME_CONSTANTS.boxSize;
             const platformHeight = GAME_CONSTANTS.boxSize;
             const x = (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize;
@@ -180,7 +185,7 @@ export class GameComponent implements OnInit {
         this.data.set('playerData', { health: 5, lastDamageTime: 0 });
 
         // Crear jugador con textura
-        const player = this.physics.add.sprite(nivel1.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - nivel1.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
+        const player = this.physics.add.sprite(nivel1!.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - nivel1!.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
         player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 1.5);
         player.texture.setFilter(Phaser.Textures.NEAREST);
 
@@ -207,7 +212,7 @@ export class GameComponent implements OnInit {
 
         // Crear enemigos
         const enemies = this.physics.add.staticGroup();
-        nivel1.fire.forEach((enemy: Fire) => {
+        nivel1!.fire.forEach((enemy: Fire) => {
             let enemySprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
 
             enemySprite = this.add.sprite(enemy.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - GAME_CONSTANTS.boxSize / 2 - GAME_CONSTANTS.boxSize, 'fire');
@@ -219,7 +224,7 @@ export class GameComponent implements OnInit {
 
         // Crear coleccionables
         const collectibles = this.physics.add.staticGroup();
-        nivel1.stars.forEach((collectible: Collectible) => {
+        nivel1!.stars.forEach((collectible: Collectible) => {
             const collectibleSprite = this.add.sprite(
                 collectible.x * GAME_CONSTANTS.boxSize,
                 GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize - GAME_CONSTANTS.boxSize / 2,

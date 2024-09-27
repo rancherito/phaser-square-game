@@ -6,7 +6,7 @@ export interface Platform {
     width: number;
 }
 
-export interface Player {
+export interface Player extends Cell {
     x: number;
     y: number;
 }
@@ -32,7 +32,7 @@ export interface GameLevel {
 }
 export interface LevelData {
     name: string;
-    platforms: OptimizedPlatform[];
+    platforms: Platform[];
     hero: Cell | null;
     fire: Cell[];
     stars: Cell[];
@@ -43,8 +43,3 @@ export interface Cell {
     x: number;
     y: number;
 }
-
-export interface OptimizedPlatform extends Cell {
-    width?: number;
-}
-

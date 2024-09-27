@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JsonImportExportService } from '../services/import-export.service';
 import { ToastrService } from 'ngx-toastr';
-import { Cell, LevelData } from './types';
+import { Cell, LevelData } from '../services/types';
 
 
 interface Point {
