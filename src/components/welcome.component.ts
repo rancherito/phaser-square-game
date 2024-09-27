@@ -30,7 +30,7 @@ import { GameComponent } from "./game.component";
                         @for (project of listProjects(); track project) {
                             <li class="border border-gray-200 rounded-lg overflow-hidden">
                                 <button class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-200" (click)="loadPorject(project)">
-                                    {{ project }}
+                                    {{ project.replace('_', ' ').toUpperCase() }}
                                 </button>
                             </li>
                         }

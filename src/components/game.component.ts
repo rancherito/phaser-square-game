@@ -60,7 +60,7 @@ function spawnFallingFire(this: Phaser.Scene) {
     const fallingFire = this.data.get('fallingFire') as Phaser.Physics.Arcade.Group;
     const x = xPositionFallinFire * GAME_CONSTANTS.boxSize + GAME_CONSTANTS.boxSize / 2;
 
-    const fire = fallingFire.create(x, 0, 'fire') as Phaser.Physics.Arcade.Sprite;
+    const fire = fallingFire.create(x, 2 * GAME_CONSTANTS.boxSize, 'fire') as Phaser.Physics.Arcade.Sprite;
     fire.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
     fire.play('fire');
 
