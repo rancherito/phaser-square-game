@@ -6,5 +6,6 @@ import { LevelData } from './import-export.service';
 })
 export class GameService {
     currentLevel = signal<LevelData | null>(null);
+    heroLife = signal<number>(5);
     constructor() {}
 }
