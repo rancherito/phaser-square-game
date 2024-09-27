@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
+import { Observable, from, map } from 'rxjs';
 
 export interface Cell {
     x: number;
@@ -22,6 +24,7 @@ export interface LevelData {
     providedIn: 'root'
 })
 export class JsonImportExportService {
+    private firestore: Firestore = inject(Firestore);
     constructor() { }
 
     exportJSON(levelData: LevelData): string {
@@ -77,5 +80,30 @@ export class JsonImportExportService {
 
     getMaxX(cells: Cell[]): number {
         return cells.reduce((max, cell) => Math.max(max, cell.x), 0);
+    }
+
+
+    saveProject(projectId: string, levelData: LevelData): Promise<void> {
+        const projectRef = doc(collection(this.firestore, 'projects'), projectId);
+        return setDoc(projectRef, levelData);
+    }
+
+    getProject(projectId: string): Observable<LevelData | null> {
+        const projectRef = doc(collection(this.firestore, 'projects'), projectId);
+        return from(getDoc(projectRef)).pipe(
+            map(docSnapshot => docSnapshot.exists() ? docSnapshot.data() as LevelData : null)
+        );
+    }
+
+    listProjects(): Observable<string[]> {
+        const projectsRef = collection(this.firestore, 'projects');
+        return from(getDocs(projectsRef)).pipe(
+            map(snapshot => snapshot.docs.map(doc => doc.id))
+        );
+    }
+
+    deleteProject(projectId: string): Promise<void> {
+        const projectRef = doc(collection(this.firestore, 'projects'), projectId);
+        return deleteDoc(projectRef);
     }
 }

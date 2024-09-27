@@ -18,14 +18,14 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
     standalone: true,
     imports: [CommonModule, FormsModule],
     template: `
-    <div class="container">
+    <div class="flex">
       <div #gridContainer class="grid-container"
            (mousedown)="handleMouseDown($event)"
            (mouseup)="handleMouseUp($event)"
            (mousemove)="handleMouseMove($event)"
            (mouseleave)="handleMouseLeave()"
            >
-        <div class="grid" 
+        <div class="grilla" 
              [style.width.px]="gridWidth()" 
              [style.height.px]="rows() * cellSize">
           @for (cell of heroCells(); track cell.x + '-' + cell.y) {
@@ -43,38 +43,54 @@ type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
         </div>
       </div>
       <div class="panel">
-        <label for="columnsInput">Columnas: </label>
-        <input
-          id="columnsInput"
-          type="number"
-          [ngModel]="columns()"
-          (ngModelChange)="updateColumns($event)"
-        >
-        <div>
-          <h3>Seleccionar entidad:</h3>
-          <button (click)="selectEntity('hero')" [class.selected]="selectedEntity() === 'hero'">Héroe</button>
-          <button (click)="selectEntity('platform')" [class.selected]="selectedEntity() === 'platform'">Platform</button>
-          <button (click)="selectEntity('fire')" [class.selected]="selectedEntity() === 'fire'">Fire</button>
-          <button (click)="selectEntity('star')" [class.selected]="selectedEntity() === 'star'">Estrella</button>
-          <button (click)="selectEntity('eraser')" [class.selected]="selectedEntity() === 'eraser'">Borrador</button>
+      <div class="mb-4">
+          <label for="columnsInput" class="block mb-2 font-bold">Columnas: </label>
+          <input
+            id="columnsInput"
+            type="number"
+            [ngModel]="columns()"
+            (ngModelChange)="updateColumns($event)"
+            class="w-full p-2 border border-gray-300 rounded"
+          >
         </div>
-        <div>
-          <button (click)="exportJSON()">Exportar JSON</button>
-          <input type="file" (change)="importJSON($event)" accept=".json">
+        <div class="mb-4">
+          <h3 class="mb-2 font-bold">Seleccionar entidad:</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button (click)="selectEntity('hero')" [class.bg-blue-200]="selectedEntity() === 'hero'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Héroe</button>
+            <button (click)="selectEntity('platform')" [class.bg-blue-200]="selectedEntity() === 'platform'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Platform</button>
+            <button (click)="selectEntity('fire')" [class.bg-blue-200]="selectedEntity() === 'fire'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Fire</button>
+            <button (click)="selectEntity('star')" [class.bg-blue-200]="selectedEntity() === 'star'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Estrella</button>
+            <button (click)="selectEntity('eraser')" [class.bg-blue-200]="selectedEntity() === 'eraser'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Borrador</button>
+          </div>
+        </div>
+        <div class="mb-4">
+          <button (click)="exportJSON()" class="w-full p-2 mb-2 bg-blue-500 text-white rounded hover:bg-blue-600">Exportar JSON</button>
+          <input type="file" (change)="importJSON($event)" accept=".json" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div class="mb-4">
+          <input [(ngModel)]="projectName" placeholder="Nombre del proyecto" class="w-full p-2 mb-2 border border-gray-300 rounded">
+          <button (click)="saveProject()" class="w-full p-2 mb-2 bg-green-500 text-white rounded hover:bg-green-600">Guardar Proyecto</button>
+        </div>
+        <div class="mb-4">
+          <button (click)="loadProjects()" class="w-full p-2 mb-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Cargar Proyectos</button>
+          <select [(ngModel)]="selectedProject" class="w-full p-2 mb-2 border border-gray-300 rounded">
+            <option value="">Seleccionar proyecto</option>
+            <option *ngFor="let project of projects" [value]="project">{{project}}</option>
+          </select>
+          <button (click)="loadProject()" [disabled]="!selectedProject" class="w-full p-2 mb-2 bg-blue-500 text-white rounded hover:bg-blue-600" [class.opacity-50]="!selectedProject">Cargar Proyecto</button>
+          <button (click)="deleteProject()" [disabled]="!selectedProject" class="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600" [class.opacity-50]="!selectedProject">Eliminar Proyecto</button>
         </div>
       </div>
     </div>
   `,
     styles: [`
-    .container {
-      display: flex;
-    }
+    
     .grid-container {
       overflow-x: auto;
       width: calc(100% - 200px);
       border: 1px solid black;
     }
-    .grid {
+    .grilla {
       position: relative;
       height: 1200px;
       background-color: #ccc;
@@ -124,9 +140,12 @@ export class InteractiveGridComponent implements AfterViewInit {
     currentPosition = signal<Point | null>(null);
     selectedEntity = signal<EntityType>('platform');
 
+    projectName = '';
+    selectedProject = '';
+    projects: string[] = [];
+
     gridWidth = computed(() => this.columns() * this.cellSize);
     private jsonService: JsonImportExportService = inject(JsonImportExportService);
-
 
     ngAfterViewInit() {
         this.gridContainer.nativeElement.addEventListener('scroll', () => {
@@ -291,6 +310,91 @@ export class InteractiveGridComponent implements AfterViewInit {
                 }
             };
             reader.readAsText(file);
+        }
+    }
+
+    saveProject() {
+        if (!this.projectName) {
+            alert('Por favor, ingrese un nombre para el proyecto');
+            return;
+        }
+
+        const levelData: LevelData = {
+            name: this.projectName,
+            platforms: this.jsonService.optimizePlatforms(this.platformCells()),
+            hero: this.heroCells()[0] || null,
+            fire: this.fireCells(),
+            stars: this.starCells(),
+            background: "bg_forest"
+        };
+
+        this.jsonService.saveProject(this.projectName, levelData)
+            .then(() => {
+                alert('Proyecto guardado exitosamente');
+                this.loadProjects();
+            })
+            .catch(error => {
+                console.error('Error al guardar el proyecto:', error);
+                alert('Error al guardar el proyecto');
+            });
+    }
+
+    loadProjects() {
+        this.jsonService.listProjects().subscribe(
+            projects => {
+                this.projects = projects;
+            },
+            error => {
+                console.error('Error al cargar la lista de proyectos:', error);
+                alert('Error al cargar la lista de proyectos');
+            }
+        );
+    }
+
+    loadProject() {
+        if (!this.selectedProject) return;
+
+        this.jsonService.getProject(this.selectedProject).subscribe(
+            levelData => {
+                if (levelData) {
+                    this.platformCells.set(this.jsonService.expandOptimizedPlatforms(levelData.platforms));
+                    this.heroCells.set(levelData.hero ? [levelData.hero] : []);
+                    this.fireCells.set(levelData.fire);
+                    this.starCells.set(levelData.stars);
+
+                    const maxX = this.jsonService.getMaxX([
+                        ...this.platformCells(),
+                        ...this.heroCells(),
+                        ...this.fireCells(),
+                        ...this.starCells()
+                    ]);
+                    this.updateColumns(Math.max(maxX + 1, 20));
+                    alert('Proyecto cargado exitosamente');
+                } else {
+                    alert('Proyecto no encontrado');
+                }
+            },
+            error => {
+                console.error('Error al cargar el proyecto:', error);
+                alert('Error al cargar el proyecto');
+            }
+        );
+    }
+
+    deleteProject() {
+        if (!this.selectedProject) return;
+
+        if (confirm(`¿Está seguro de que desea eliminar el proyecto "${this.selectedProject}"?`)) {
+            this.jsonService.deleteProject(this.selectedProject)
+                .then(() => {
+                    alert('Proyecto eliminado exitosamente');
+                    this.loadProjects();
+                    this.selectedProject = '';
+                })
+                .catch(error => {
+                    console.error('Error al eliminar el proyecto:', error);
+                    alert('Error al eliminar el proyecto');
+                });
         }
     }
 }

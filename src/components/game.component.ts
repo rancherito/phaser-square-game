@@ -4,6 +4,8 @@ import * as Phaser from 'phaser';
 import { GAME_CONSTANTS, nivel1 } from './levels';
 import { Fire, Collectible } from './types';
 
+console.log(JSON.stringify(nivel1));
+
 function collectItem(player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) {
     (item as Phaser.GameObjects.Rectangle).setVisible(false);
     (item.body as Phaser.Physics.Arcade.StaticBody).enable = false;
@@ -76,7 +78,7 @@ export class GameComponent implements OnInit {
                 default: 'arcade',
                 arcade: {
                     gravity: { y: 2000, x: 0 },
-                    debug: true // Set to true for debugging
+                    debug: false // Set to true for debugging
                 }
             },
             render: {
