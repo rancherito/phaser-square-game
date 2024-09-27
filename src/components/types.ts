@@ -30,3 +30,21 @@ export interface GameLevel {
     stars: Collectible[];
     background: string;
 }
+export interface LevelData {
+    name: string;
+    platforms: OptimizedPlatform[];
+    hero: Cell | null;
+    fire: Cell[];
+    stars: Cell[];
+    background: string;
+}
+
+export interface Cell {
+    x: number;
+    y: number;
+}
+
+export interface OptimizedPlatform extends Cell {
+    width?: number;
+}
+

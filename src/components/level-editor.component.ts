@@ -1,8 +1,9 @@
 import { Component, signal, computed, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Cell, JsonImportExportService, LevelData } from '../services/import-export.service';
+import { JsonImportExportService } from '../services/import-export.service';
 import { ToastrService } from 'ngx-toastr';
+import { Cell, LevelData } from './types';
 
 
 interface Point {

@@ -1,24 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
+import { LevelData, Cell, OptimizedPlatform } from '../components/types';
 
-export interface Cell {
-    x: number;
-    y: number;
-}
 
-interface OptimizedPlatform extends Cell {
-    width?: number;
-}
-
-export interface LevelData {
-    name: string;
-    platforms: OptimizedPlatform[];
-    hero: Cell | null;
-    fire: Cell[];
-    stars: Cell[];
-    background: string;
-}
 
 @Injectable({
     providedIn: 'root'
@@ -114,3 +99,5 @@ export class JsonImportExportService {
         return deleteDoc(projectRef);
     }
 }
+export { LevelData };
+

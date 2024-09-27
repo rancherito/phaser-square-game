@@ -1,10 +1,10 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Phaser from 'phaser';
 import { GAME_CONSTANTS, nivel1 } from './levels';
-import { Fire, Collectible } from './types';
-
-console.log(JSON.stringify(nivel1));
+import { Fire, Collectible, GameLevel } from './types';
+import { GameService } from '../services/game.service';
+import { Router } from '@angular/router';
 
 function collectItem(player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) {
     (item as Phaser.GameObjects.Rectangle).setVisible(false);
@@ -49,26 +49,46 @@ function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, pl
     standalone: true,
     imports: [CommonModule],
     template: '<div id="gameContainer"></div>',
-    styles: [`
-        #gameContainer {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        :host {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-    `]
+    styles: [
+        `
+            #gameContainer {
+                width: 100vw;
+                height: 100vh;
+                margin: 0;
+                padding: 0;
+            }
+            :host {
+                display: block;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+        `,
+    ],
 })
 export class GameComponent implements OnInit {
     game!: Phaser.Game;
-    constructor(private el: ElementRef) { }
+    private gameService = inject(GameService);
+    private router = inject(Router);
+    constructor(private el: ElementRef) {}
+
+    levelData : GameLevel | null = null;
+    component = this;
 
     ngOnInit() {
+        console.log(this.gameService.currentLevel());
+
+
+        if (!this.gameService.currentLevel()) {
+            this.router.navigate(['/']);
+            return;
+        }
+
+        // this.levelData = {
+        //     ...this.gameService.currentLevel(),
+        // };
+        
+
         const config: Phaser.Types.Core.GameConfig = {
             type: Phaser.AUTO,
             width: window.innerWidth,
@@ -78,21 +98,21 @@ export class GameComponent implements OnInit {
                 default: 'arcade',
                 arcade: {
                     gravity: { y: 2000, x: 0 },
-                    debug: false // Set to true for debugging
-                }
+                    debug: false, // Set to true for debugging
+                },
             },
             render: {
-                pixelArt: true
+                pixelArt: true,
             },
             scene: {
                 preload: this.preload,
                 create: this.create,
-                update: this.update
+                update: this.update,
             },
             scale: {
                 mode: Phaser.Scale.RESIZE,
-                autoCenter: Phaser.Scale.CENTER_BOTH
-            }
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+            },
         };
 
         this.game = new Phaser.Game(config);
@@ -101,7 +121,7 @@ export class GameComponent implements OnInit {
     preload(this: Phaser.Scene) {
         this.load.image('background', 'assets/backgrounds/' + nivel1.background + '.png');
         this.load.image('hero_walk_01', 'assets/hero_walk_01.png');
-        this.load.image('hero_walk_02', 'assets/hero_walk_02.png');
+        this.load.image('hero_stop_01', 'assets/hero_stop_01.png');
         this.load.image('hero_walk_03', 'assets/hero_walk_03.png');
         this.load.image('platform', 'assets/grass.png');
         this.load.image('movingPlatform', 'assets/moving-platform.png');
@@ -109,7 +129,7 @@ export class GameComponent implements OnInit {
         this.load.image('heroJump', 'assets/hero_jump.png');
         this.load.spritesheet('fire', 'assets/fire_sprite.png', {
             frameWidth: 105,
-            frameHeight: 105
+            frameHeight: 105,
         });
     }
 
@@ -122,17 +142,9 @@ export class GameComponent implements OnInit {
         const backgroundImage = this.textures.get('background');
         const backgroundHeight = backgroundImage.getSourceImage().height;
 
-        const backgroundTileSprite = this.add.tileSprite(
-            0,
-            0,
-            GAME_CONSTANTS.worldWidth,
-            GAME_CONSTANTS.worldHeight,
-            'background'
-        );
+        const backgroundTileSprite = this.add.tileSprite(0, 0, GAME_CONSTANTS.worldWidth, GAME_CONSTANTS.worldHeight, 'background');
         backgroundTileSprite.setOrigin(0, 0);
-        backgroundTileSprite.setScale(
-            GAME_CONSTANTS.worldHeight / backgroundHeight
-        );
+        backgroundTileSprite.setScale(GAME_CONSTANTS.worldHeight / backgroundHeight);
 
         backgroundTileSprite.texture.setFilter(Phaser.Textures.NEAREST);
 
@@ -141,7 +153,7 @@ export class GameComponent implements OnInit {
         // Crear plataformas
         const platforms = this.physics.add.staticGroup();
 
-        nivel1.platforms.forEach(platform => {
+        nivel1.platforms.forEach((platform) => {
             const platformWidth = platform.width * GAME_CONSTANTS.boxSize;
             const platformHeight = GAME_CONSTANTS.boxSize;
             const x = (platform.x + platform.width / 2) * GAME_CONSTANTS.boxSize;
@@ -168,31 +180,22 @@ export class GameComponent implements OnInit {
         this.data.set('playerData', { health: 5, lastDamageTime: 0 });
 
         // Crear jugador con textura
-        const player = this.physics.add.sprite(
-            nivel1.hero.x * GAME_CONSTANTS.boxSize,
-            GAME_CONSTANTS.worldHeight - nivel1.hero.y * GAME_CONSTANTS.boxSize,
-            'hero_walk_02'
-        );
+        const player = this.physics.add.sprite(nivel1.hero.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - nivel1.hero.y * GAME_CONSTANTS.boxSize, 'hero_stop_01');
         player.setDisplaySize(GAME_CONSTANTS.boxSize * 1.5, GAME_CONSTANTS.boxSize * 1.5);
         player.texture.setFilter(Phaser.Textures.NEAREST);
 
         // Create walking animation
         this.anims.create({
             key: 'walk',
-            frames: [
-                { key: 'hero_walk_02' },
-                { key: 'hero_walk_01' },
-                { key: 'hero_walk_02' },
-                { key: 'hero_walk_03' }
-            ],
+            frames: [{ key: 'hero_stop_01' }, { key: 'hero_walk_01' }, { key: 'hero_stop_01' }, { key: 'hero_walk_03' }],
             frameRate: 8,
-            repeat: -1
+            repeat: -1,
         });
         this.anims.create({
             key: 'fire',
             frames: this.anims.generateFrameNumbers('fire', { start: 0, end: 15 }),
             frameRate: 12,
-            repeat: -1
+            repeat: -1,
         });
 
         const playerBody = player.body as Phaser.Physics.Arcade.Body;
@@ -207,11 +210,7 @@ export class GameComponent implements OnInit {
         nivel1.fire.forEach((enemy: Fire) => {
             let enemySprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
 
-            enemySprite = this.add.sprite(
-                enemy.x * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.worldHeight - ((GAME_CONSTANTS.boxSize) / 2) - GAME_CONSTANTS.boxSize,
-                'fire'
-            );
+            enemySprite = this.add.sprite(enemy.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - GAME_CONSTANTS.boxSize / 2 - GAME_CONSTANTS.boxSize, 'fire');
             enemySprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
             enemySprite.play('fire');
 
@@ -223,8 +222,8 @@ export class GameComponent implements OnInit {
         nivel1.stars.forEach((collectible: Collectible) => {
             const collectibleSprite = this.add.sprite(
                 collectible.x * GAME_CONSTANTS.boxSize,
-                GAME_CONSTANTS.worldHeight - (collectible.y * GAME_CONSTANTS.boxSize) - GAME_CONSTANTS.boxSize / 2,
-                'starGold'
+                GAME_CONSTANTS.worldHeight - collectible.y * GAME_CONSTANTS.boxSize - GAME_CONSTANTS.boxSize / 2,
+                'starGold',
             );
             collectibleSprite.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize);
             collectibles.add(collectibleSprite);
@@ -296,7 +295,7 @@ export class GameComponent implements OnInit {
 
             if (!isInAir) {
                 player.stop();
-                player.setTexture('hero_walk_02');
+                player.setTexture('hero_stop_01');
             }
         }
 
