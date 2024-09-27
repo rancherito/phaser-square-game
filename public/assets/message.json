@@ -1,0 +1,483 @@
+[
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la deforestación en la Amazonía peruana alcanzó 200 millones de toneladas métricas de carbono emitidas?",
+    "descripcion": "Esto incluye pérdidas por minería ilegal, tala selectiva y grandes proyectos agrícolas como el aceite de palma y cacao.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la minería de oro en áreas como La Pampa (Madre de Dios) siguió siendo una de las mayores fuentes de deforestación?",
+    "descripcion": "A pesar de las medidas del gobierno para detener estas actividades, se deforestaron 52 acres de bosque primario entre enero y agosto de ese año.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que el 24% del área agrícola en la Amazonía peruana proviene de bosques talados entre 2001 y 2017?",
+    "descripcion": "La expansión agrícola sigue siendo una de las principales causas de pérdida de bosques, especialmente para cultivos de palma aceitera y cacao.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2021, las concesiones para la extracción de petróleo y gas cubren más del 60% de la Amazonía peruana?",
+    "descripcion": "Estas concesiones ponen en riesgo ecosistemas vitales y la biodiversidad local.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que la región amazónica peruana alberga a más de 350 comunidades indígenas como los Aguaruna y los Urarina?",
+    "descripcion": "Estas comunidades viven en áreas con alta densidad de carbono y dependen directamente de la preservación de la selva para su cultura y sustento.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la Amazonía peruana absorbe alrededor de 2 mil millones de toneladas de CO2 al año?",
+    "descripcion": "Esto la convierte en un ecosistema clave para la regulación climática global.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la deforestación causada por la agricultura a gran escala representa más de 1.1 millones de hectáreas de pérdida forestal en la Amazonía peruana?",
+    "descripcion": "La palma aceitera y el cacao son dos de los cultivos más responsables de esta destrucción.",
+    "anio": 2017
+  },
+  {
+    "sabias_que": "¿Sabías que cada año se deforestan 100,000 hectáreas en la Amazonía peruana debido a actividades como la agricultura, la tala ilegal y la minería informal?",
+    "descripcion": "La minería ilegal, en particular, ha sido una de las principales causas en regiones como Madre de Dios.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la minería ilegal en Madre de Dios ha contaminado ríos con niveles de mercurio 5 veces superiores a los límites seguros?",
+    "descripcion": "Esta contaminación afecta gravemente a las comunidades locales, en especial a las indígenas, poniendo en riesgo su salud.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que la construcción de nuevas carreteras en la Amazonía peruana ha facilitado la tala ilegal y la colonización?",
+    "descripcion": "Estas rutas se han incrementado en un 75% en la última década, promoviendo la pérdida de biodiversidad.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que las plantaciones de palma aceitera en Loreto han causado la deforestación de más de 16,800 hectáreas entre 2006 y 2015?",
+    "descripcion": "Esta expansión amenaza la biodiversidad local y el equilibrio del ecosistema.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático podría convertir hasta el 60% de la Amazonía en una sabana seca para el año 2050 si no se toman medidas drásticas?",
+    "descripcion": "Esto afectaría los patrones de lluvia y la biodiversidad de la región, causando impactos negativos en el ecosistema.",
+    "anio": 2050
+  },
+  {
+    "sabias_que": "¿Sabías que más del 70% del bosque amazónico en Perú se ve afectado por la tala selectiva, degradando su estructura y biodiversidad?",
+    "descripcion": "A pesar de ser menos visible que la deforestación completa, su impacto es significativo a nivel ecológico.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en 2019 la Amazonía peruana sufrió un incremento del 30% en incendios forestales respecto al año anterior?",
+    "descripcion": "La actividad humana y el cambio climático han intensificado estos eventos, amenazando la biodiversidad.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que el tráfico ilegal de especies en la Amazonía peruana genera más de $100 millones al año?",
+    "descripcion": "Esta actividad amenaza a especies únicas de la región y a la biodiversidad.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que la minería de oro en la Amazonía peruana genera aproximadamente 3 toneladas de oro anualmente?",
+    "descripcion": "Sin embargo, el 90% de esta minería es ilegal y ha contaminado gran parte de los ríos con mercurio.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que más del 80% de las exportaciones de madera en Perú provienen de tala ilegal?",
+    "descripcion": "Esta explotación descontrolada pone en riesgo el hábitat de muchas especies y contribuye a la deforestación.",
+    "anio": 2012
+  },
+  {
+    "sabias_que": "¿Sabías que el 25% de los medicamentos occidentales se derivan de ingredientes encontrados en las selvas tropicales?",
+    "descripcion": "La Amazonía podría albergar curas aún no descubiertas debido a su alta biodiversidad.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el ecoturismo en la Amazonía peruana genera más de $500 millones al año?",
+    "descripcion": "Una selva saludable es clave para esta economía sostenible y para la conservación.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático ha intensificado los ciclos de sequía en la Amazonía peruana?",
+    "descripcion": "Esto ha aumentado el riesgo de incendios forestales en un 30% en los últimos 5 años.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2022, más de 78% de las comunidades indígenas en la Amazonía peruana fueron afectadas por la contaminación de mercurio?",
+    "descripcion": "Esta contaminación es principalmente resultado de la minería ilegal de oro en la región de Madre de Dios.",
+    "anio": 2022
+  },
+  {
+    "sabias_que": "¿Sabías que más de 2,500 especies de animales en la Amazonía peruana están en peligro de extinción?",
+    "descripcion": "Esto se debe principalmente a la pérdida de hábitat y la deforestación masiva.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en julio de 2024 se documentaron nuevas imágenes de la tribu no contactada Mashco Piro?",
+    "descripcion": "Las fotografías muestran a miembros de esta tribu amazónica cerca de áreas donde se iniciará la tala de árboles. A pesar de que estas tierras pertenecen a los Mashco Piro, el gobierno ha otorgado concesiones a empresas madereras, poniendo en riesgo la supervivencia de la tribu y exponiéndolos a posibles enfermedades.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en septiembre de 2024 se publicó un estudio que detalla cómo diferentes regiones de la Amazonía responden de manera distinta a las sequías?",
+    "descripcion": "Según la investigación, las áreas con acceso a aguas subterráneas muestran más crecimiento durante las sequías, mientras que los árboles en suelos menos fértiles experimentan mayor mortalidad. Este descubrimiento es clave para futuras decisiones de conservación.",
+    "anio": 2024
+  },
+
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la deforestación en la Amazonía peruana alcanzó 200 millones de toneladas métricas de carbono emitidas?",
+    "descripcion": "Esto incluye pérdidas por minería ilegal, tala selectiva y grandes proyectos agrícolas como el aceite de palma y cacao.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la minería de oro en áreas como La Pampa (Madre de Dios) siguió siendo una de las mayores fuentes de deforestación?",
+    "descripcion": "A pesar de las medidas del gobierno para detener estas actividades, se deforestaron 52 acres de bosque primario entre enero y agosto de ese año.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que el 24% del área agrícola en la Amazonía peruana proviene de bosques talados entre 2001 y 2017?",
+    "descripcion": "La expansión agrícola sigue siendo una de las principales causas de pérdida de bosques, especialmente para cultivos de palma aceitera y cacao.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2021, las concesiones para la extracción de petróleo y gas cubren más del 60% de la Amazonía peruana?",
+    "descripcion": "Estas concesiones ponen en riesgo ecosistemas vitales y la biodiversidad local.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que la región amazónica peruana alberga a más de 350 comunidades indígenas como los Aguaruna y los Urarina?",
+    "descripcion": "Estas comunidades viven en áreas con alta densidad de carbono y dependen directamente de la preservación de la selva para su cultura y sustento.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la Amazonía peruana absorbe alrededor de 2 mil millones de toneladas de CO2 al año?",
+    "descripcion": "Esto la convierte en un ecosistema clave para la regulación climática global.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la deforestación causada por la agricultura a gran escala representa más de 1.1 millones de hectáreas de pérdida forestal en la Amazonía peruana?",
+    "descripcion": "La palma aceitera y el cacao son dos de los cultivos más responsables de esta destrucción.",
+    "anio": 2017
+  },
+  {
+    "sabias_que": "¿Sabías que cada año se deforestan 100,000 hectáreas en la Amazonía peruana debido a actividades como la agricultura, la tala ilegal y la minería informal?",
+    "descripcion": "La minería ilegal, en particular, ha sido una de las principales causas en regiones como Madre de Dios.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la minería ilegal en Madre de Dios ha contaminado ríos con niveles de mercurio 5 veces superiores a los límites seguros?",
+    "descripcion": "Esta contaminación afecta gravemente a las comunidades locales, en especial a las indígenas, poniendo en riesgo su salud.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que la construcción de nuevas carreteras en la Amazonía peruana ha facilitado la tala ilegal y la colonización?",
+    "descripcion": "Estas rutas se han incrementado en un 75% en la última década, promoviendo la pérdida de biodiversidad.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que las plantaciones de palma aceitera en Loreto han causado la deforestación de más de 16,800 hectáreas entre 2006 y 2015?",
+    "descripcion": "Esta expansión amenaza la biodiversidad local y el equilibrio del ecosistema.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático podría convertir hasta el 60% de la Amazonía en una sabana seca para el año 2050 si no se toman medidas drásticas?",
+    "descripcion": "Esto afectaría los patrones de lluvia y la biodiversidad de la región, causando impactos negativos en el ecosistema.",
+    "anio": 2050
+  },
+  {
+    "sabias_que": "¿Sabías que más del 70% del bosque amazónico en Perú se ve afectado por la tala selectiva, degradando su estructura y biodiversidad?",
+    "descripcion": "A pesar de ser menos visible que la deforestación completa, su impacto es significativo a nivel ecológico.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en 2019 la Amazonía peruana sufrió un incremento del 30% en incendios forestales respecto al año anterior?",
+    "descripcion": "La actividad humana y el cambio climático han intensificado estos eventos, amenazando la biodiversidad.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que el tráfico ilegal de especies en la Amazonía peruana genera más de $100 millones al año?",
+    "descripcion": "Esta actividad amenaza a especies únicas de la región y a la biodiversidad.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que la minería de oro en la Amazonía peruana genera aproximadamente 3 toneladas de oro anualmente?",
+    "descripcion": "Sin embargo, el 90% de esta minería es ilegal y ha contaminado gran parte de los ríos con mercurio.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que más del 80% de las exportaciones de madera en Perú provienen de tala ilegal?",
+    "descripcion": "Esta explotación descontrolada pone en riesgo el hábitat de muchas especies y contribuye a la deforestación.",
+    "anio": 2012
+  },
+  {
+    "sabias_que": "¿Sabías que el 25% de los medicamentos occidentales se derivan de ingredientes encontrados en las selvas tropicales?",
+    "descripcion": "La Amazonía podría albergar curas aún no descubiertas debido a su alta biodiversidad.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el ecoturismo en la Amazonía peruana genera más de $500 millones al año?",
+    "descripcion": "Una selva saludable es clave para esta economía sostenible y para la conservación.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático ha intensificado los ciclos de sequía en la Amazonía peruana?",
+    "descripcion": "Esto ha aumentado el riesgo de incendios forestales en un 30% en los últimos 5 años.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2022, más de 78% de las comunidades indígenas en la Amazonía peruana fueron afectadas por la contaminación de mercurio?",
+    "descripcion": "Esta contaminación es principalmente resultado de la minería ilegal de oro en la región de Madre de Dios.",
+    "anio": 2022
+  },
+  {
+    "sabias_que": "¿Sabías que más de 2,500 especies de animales en la Amazonía peruana están en peligro de extinción?",
+    "descripcion": "Esto se debe principalmente a la pérdida de hábitat y la deforestación masiva.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en julio de 2024 se documentaron nuevas imágenes de la tribu no contactada Mashco Piro?",
+    "descripcion": "Las fotografías muestran a miembros de esta tribu amazónica cerca de áreas donde se iniciará la tala de árboles. A pesar de que estas tierras pertenecen a los Mashco Piro, el gobierno ha otorgado concesiones a empresas madereras, poniendo en riesgo la supervivencia de la tribu y exponiéndolos a posibles enfermedades.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en septiembre de 2024 se publicó un estudio que detalla cómo diferentes regiones de la Amazonía responden de manera distinta a las sequías?",
+    "descripcion": "Según la investigación, las áreas con acceso a aguas subterráneas muestran más crecimiento durante las sequías, mientras que los árboles en suelos menos fértiles experimentan mayor mortalidad. Este descubrimiento es clave para futuras decisiones de conservación.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la deforestación en la Amazonía peruana alcanzó 200 millones de toneladas métricas de carbono emitidas?",
+    "descripcion": "Esto incluye pérdidas por minería ilegal, tala selectiva y grandes proyectos agrícolas como el aceite de palma y cacao.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la minería de oro en áreas como La Pampa (Madre de Dios) siguió siendo una de las mayores fuentes de deforestación?",
+    "descripcion": "A pesar de las medidas del gobierno para detener estas actividades, se deforestaron 52 acres de bosque primario entre enero y agosto de ese año.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que el 24% del área agrícola en la Amazonía peruana proviene de bosques talados entre 2001 y 2017?",
+    "descripcion": "La expansión agrícola sigue siendo una de las principales causas de pérdida de bosques, especialmente para cultivos de palma aceitera y cacao.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2021, las concesiones para la extracción de petróleo y gas cubren más del 60% de la Amazonía peruana?",
+    "descripcion": "Estas concesiones ponen en riesgo ecosistemas vitales y la biodiversidad local.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que la región amazónica peruana alberga a más de 350 comunidades indígenas como los Aguaruna y los Urarina?",
+    "descripcion": "Estas comunidades viven en áreas con alta densidad de carbono y dependen directamente de la preservación de la selva para su cultura y sustento.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la Amazonía peruana absorbe alrededor de 2 mil millones de toneladas de CO2 al año?",
+    "descripcion": "Esto la convierte en un ecosistema clave para la regulación climática global.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la deforestación causada por la agricultura a gran escala representa más de 1.1 millones de hectáreas de pérdida forestal en la Amazonía peruana?",
+    "descripcion": "La palma aceitera y el cacao son dos de los cultivos más responsables de esta destrucción.",
+    "anio": 2017
+  },
+  {
+    "sabias_que": "¿Sabías que cada año se deforestan 100,000 hectáreas en la Amazonía peruana debido a actividades como la agricultura, la tala ilegal y la minería informal?",
+    "descripcion": "La minería ilegal, en particular, ha sido una de las principales causas en regiones como Madre de Dios.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la minería ilegal en Madre de Dios ha contaminado ríos con niveles de mercurio 5 veces superiores a los límites seguros?",
+    "descripcion": "Esta contaminación afecta gravemente a las comunidades locales, en especial a las indígenas, poniendo en riesgo su salud.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que la construcción de nuevas carreteras en la Amazonía peruana ha facilitado la tala ilegal y la colonización?",
+    "descripcion": "Estas rutas se han incrementado en un 75% en la última década, promoviendo la pérdida de biodiversidad.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que las plantaciones de palma aceitera en Loreto han causado la deforestación de más de 16,800 hectáreas entre 2006 y 2015?",
+    "descripcion": "Esta expansión amenaza la biodiversidad local y el equilibrio del ecosistema.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático podría convertir hasta el 60% de la Amazonía en una sabana seca para el año 2050 si no se toman medidas drásticas?",
+    "descripcion": "Esto afectaría los patrones de lluvia y la biodiversidad de la región, causando impactos negativos en el ecosistema.",
+    "anio": 2050
+  },
+  {
+    "sabias_que": "¿Sabías que más del 70% del bosque amazónico en Perú se ve afectado por la tala selectiva, degradando su estructura y biodiversidad?",
+    "descripcion": "A pesar de ser menos visible que la deforestación completa, su impacto es significativo a nivel ecológico.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en 2019 la Amazonía peruana sufrió un incremento del 30% en incendios forestales respecto al año anterior?",
+    "descripcion": "La actividad humana y el cambio climático han intensificado estos eventos, amenazando la biodiversidad.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que el tráfico ilegal de especies en la Amazonía peruana genera más de $100 millones al año?",
+    "descripcion": "Esta actividad amenaza a especies únicas de la región y a la biodiversidad.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que la minería de oro en la Amazonía peruana genera aproximadamente 3 toneladas de oro anualmente?",
+    "descripcion": "Sin embargo, el 90% de esta minería es ilegal y ha contaminado gran parte de los ríos con mercurio.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que más del 80% de las exportaciones de madera en Perú provienen de tala ilegal?",
+    "descripcion": "Esta explotación descontrolada pone en riesgo el hábitat de muchas especies y contribuye a la deforestación.",
+    "anio": 2012
+  },
+  {
+    "sabias_que": "¿Sabías que el 25% de los medicamentos occidentales se derivan de ingredientes encontrados en las selvas tropicales?",
+    "descripcion": "La Amazonía podría albergar curas aún no descubiertas debido a su alta biodiversidad.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el ecoturismo en la Amazonía peruana genera más de $500 millones al año?",
+    "descripcion": "Una selva saludable es clave para esta economía sostenible y para la conservación.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático ha intensificado los ciclos de sequía en la Amazonía peruana?",
+    "descripcion": "Esto ha aumentado el riesgo de incendios forestales en un 30% en los últimos 5 años.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2022, más de 78% de las comunidades indígenas en la Amazonía peruana fueron afectadas por la contaminación de mercurio?",
+    "descripcion": "Esta contaminación es principalmente resultado de la minería ilegal de oro en la región de Madre de Dios.",
+    "anio": 2022
+  },
+  {
+    "sabias_que": "¿Sabías que más de 2,500 especies de animales en la Amazonía peruana están en peligro de extinción?",
+    "descripcion": "Esto se debe principalmente a la pérdida de hábitat y la deforestación masiva.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en julio de 2024 se documentaron nuevas imágenes de la tribu no contactada Mashco Piro?",
+    "descripcion": "Las fotografías muestran a miembros de esta tribu amazónica cerca de áreas donde se iniciará la tala de árboles. A pesar de que estas tierras pertenecen a los Mashco Piro, el gobierno ha otorgado concesiones a empresas madereras, poniendo en riesgo la supervivencia de la tribu y exponiéndolos a posibles enfermedades.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en septiembre de 2024 se publicó un estudio que detalla cómo diferentes regiones de la Amazonía responden de manera distinta a las sequías?",
+    "descripcion": "Según la investigación, las áreas con acceso a aguas subterráneas muestran más crecimiento durante las sequías, mientras que los árboles en suelos menos fértiles experimentan mayor mortalidad. Este descubrimiento es clave para futuras decisiones de conservación.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la deforestación en la Amazonía peruana alcanzó 200 millones de toneladas métricas de carbono emitidas?",
+    "descripcion": "Esto incluye pérdidas por minería ilegal, tala selectiva y grandes proyectos agrícolas como el aceite de palma y cacao.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2020 la minería de oro en áreas como La Pampa (Madre de Dios) siguió siendo una de las mayores fuentes de deforestación?",
+    "descripcion": "A pesar de las medidas del gobierno para detener estas actividades, se deforestaron 52 acres de bosque primario entre enero y agosto de ese año.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que el 24% del área agrícola en la Amazonía peruana proviene de bosques talados entre 2001 y 2017?",
+    "descripcion": "La expansión agrícola sigue siendo una de las principales causas de pérdida de bosques, especialmente para cultivos de palma aceitera y cacao.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2021, las concesiones para la extracción de petróleo y gas cubren más del 60% de la Amazonía peruana?",
+    "descripcion": "Estas concesiones ponen en riesgo ecosistemas vitales y la biodiversidad local.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que la región amazónica peruana alberga a más de 350 comunidades indígenas como los Aguaruna y los Urarina?",
+    "descripcion": "Estas comunidades viven en áreas con alta densidad de carbono y dependen directamente de la preservación de la selva para su cultura y sustento.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la Amazonía peruana absorbe alrededor de 2 mil millones de toneladas de CO2 al año?",
+    "descripcion": "Esto la convierte en un ecosistema clave para la regulación climática global.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la deforestación causada por la agricultura a gran escala representa más de 1.1 millones de hectáreas de pérdida forestal en la Amazonía peruana?",
+    "descripcion": "La palma aceitera y el cacao son dos de los cultivos más responsables de esta destrucción.",
+    "anio": 2017
+  },
+  {
+    "sabias_que": "¿Sabías que cada año se deforestan 100,000 hectáreas en la Amazonía peruana debido a actividades como la agricultura, la tala ilegal y la minería informal?",
+    "descripcion": "La minería ilegal, en particular, ha sido una de las principales causas en regiones como Madre de Dios.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que la minería ilegal en Madre de Dios ha contaminado ríos con niveles de mercurio 5 veces superiores a los límites seguros?",
+    "descripcion": "Esta contaminación afecta gravemente a las comunidades locales, en especial a las indígenas, poniendo en riesgo su salud.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que la construcción de nuevas carreteras en la Amazonía peruana ha facilitado la tala ilegal y la colonización?",
+    "descripcion": "Estas rutas se han incrementado en un 75% en la última década, promoviendo la pérdida de biodiversidad.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que las plantaciones de palma aceitera en Loreto han causado la deforestación de más de 16,800 hectáreas entre 2006 y 2015?",
+    "descripcion": "Esta expansión amenaza la biodiversidad local y el equilibrio del ecosistema.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático podría convertir hasta el 60% de la Amazonía en una sabana seca para el año 2050 si no se toman medidas drásticas?",
+    "descripcion": "Esto afectaría los patrones de lluvia y la biodiversidad de la región, causando impactos negativos en el ecosistema.",
+    "anio": 2050
+  },
+  {
+    "sabias_que": "¿Sabías que más del 70% del bosque amazónico en Perú se ve afectado por la tala selectiva, degradando su estructura y biodiversidad?",
+    "descripcion": "A pesar de ser menos visible que la deforestación completa, su impacto es significativo a nivel ecológico.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que en 2019 la Amazonía peruana sufrió un incremento del 30% en incendios forestales respecto al año anterior?",
+    "descripcion": "La actividad humana y el cambio climático han intensificado estos eventos, amenazando la biodiversidad.",
+    "anio": 2019
+  },
+  {
+    "sabias_que": "¿Sabías que el tráfico ilegal de especies en la Amazonía peruana genera más de $100 millones al año?",
+    "descripcion": "Esta actividad amenaza a especies únicas de la región y a la biodiversidad.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que la minería de oro en la Amazonía peruana genera aproximadamente 3 toneladas de oro anualmente?",
+    "descripcion": "Sin embargo, el 90% de esta minería es ilegal y ha contaminado gran parte de los ríos con mercurio.",
+    "anio": 2021
+  },
+  {
+    "sabias_que": "¿Sabías que más del 80% de las exportaciones de madera en Perú provienen de tala ilegal?",
+    "descripcion": "Esta explotación descontrolada pone en riesgo el hábitat de muchas especies y contribuye a la deforestación.",
+    "anio": 2012
+  },
+  {
+    "sabias_que": "¿Sabías que el 25% de los medicamentos occidentales se derivan de ingredientes encontrados en las selvas tropicales?",
+    "descripcion": "La Amazonía podría albergar curas aún no descubiertas debido a su alta biodiversidad.",
+    "anio": 2015
+  },
+  {
+    "sabias_que": "¿Sabías que el ecoturismo en la Amazonía peruana genera más de $500 millones al año?",
+    "descripcion": "Una selva saludable es clave para esta economía sostenible y para la conservación.",
+    "anio": 2018
+  },
+  {
+    "sabias_que": "¿Sabías que el cambio climático ha intensificado los ciclos de sequía en la Amazonía peruana?",
+    "descripcion": "Esto ha aumentado el riesgo de incendios forestales en un 30% en los últimos 5 años.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en el año 2022, más de 78% de las comunidades indígenas en la Amazonía peruana fueron afectadas por la contaminación de mercurio?",
+    "descripcion": "Esta contaminación es principalmente resultado de la minería ilegal de oro en la región de Madre de Dios.",
+    "anio": 2022
+  },
+  {
+    "sabias_que": "¿Sabías que más de 2,500 especies de animales en la Amazonía peruana están en peligro de extinción?",
+    "descripcion": "Esto se debe principalmente a la pérdida de hábitat y la deforestación masiva.",
+    "anio": 2020
+  },
+  {
+    "sabias_que": "¿Sabías que en julio de 2024 se documentaron nuevas imágenes de la tribu no contactada Mashco Piro?",
+    "descripcion": "Las fotografías muestran a miembros de esta tribu amazónica cerca de áreas donde se iniciará la tala de árboles. A pesar de que estas tierras pertenecen a los Mashco Piro, el gobierno ha otorgado concesiones a empresas madereras, poniendo en riesgo la supervivencia de la tribu y exponiéndolos a posibles enfermedades.",
+    "anio": 2024
+  },
+  {
+    "sabias_que": "¿Sabías que en septiembre de 2024 se publicó un estudio que detalla cómo diferentes regiones de la Amazonía responden de manera distinta a las sequías?",
+    "descripcion": "Según la investigación, las áreas con acceso a aguas subterráneas muestran más crecimiento durante las sequías, mientras que los árboles en suelos menos fértiles experimentan mayor mortalidad. Este descubrimiento es clave para futuras decisiones de conservación.",
+    "anio": 2024
+  }
+]

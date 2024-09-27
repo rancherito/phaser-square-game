@@ -4,6 +4,13 @@ import * as Phaser from 'phaser';
 import { Cell, Collectible, GameLevel, LevelData } from '../services/types';
 import { GameService } from '../services/game.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
+interface Message {
+    sabias_que: string;
+    descripcion: string;
+    anio: number;
+}
 const GAME_CONSTANTS = {
     boxSize: 60,
     worldWidth: 1200 * 60, // 200 cajas de ancho
@@ -33,7 +40,6 @@ function handleFireDamage(player: Phaser.Physics.Arcade.Sprite, fire: Phaser.Gam
 function handleFlagCollision(player: Phaser.Physics.Arcade.Sprite, flag: Phaser.Physics.Arcade.Sprite) {
     window.location.href = '/?state=2';
 }
-
 
 function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, platform: Phaser.GameObjects.GameObject) {
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
@@ -93,7 +99,6 @@ function create(this: Phaser.Scene) {
     backgroundTileSprite.texture.setFilter(Phaser.Textures.NEAREST);
 
     this.data.set('background', backgroundTileSprite);
-    
 
     // Crear plataformas
     const platforms = this.physics.add.staticGroup();
@@ -181,7 +186,7 @@ function create(this: Phaser.Scene) {
         (item.body as Phaser.Physics.Arcade.StaticBody).enable = false;
         //this.showModal = true;
         this.game.scene.pause(this.scene.key);
-        GLOBAL_SERVICES?.gameComponent()?.showModal.set(true);
+        GLOBAL_SERVICES?.gameComponent()?.openModal();
     };
 
     // Agregar colisiones adicionales
@@ -324,7 +329,11 @@ let gameLevel: GameLevel | null = null;
         @if (showModal()) {
             <div class="modal">
                 <div class="modal-content">
-                    <h2>¡Has recogido una estrella!</h2>
+                    @if (currentMessage()) {
+                        <p>{{ currentMessage()!.sabias_que }}</p>
+                        <p>{{ currentMessage()!.descripcion }}</p>
+                        <p>Año: {{ currentMessage()!.anio }}</p>
+                    }
                     <button (click)="closeModal()">Aceptar</button>
                 </div>
             </div>
@@ -353,10 +362,9 @@ let gameLevel: GameLevel | null = null;
                 gap: 0.5rem;
             }
             img {
-                width: 50x;
+                width: 50px;
                 height: 50px;
             }
-            //animate heart-alive rotate infinite
             .heart-alive {
                 animation: rotate 4s infinite linear;
             }
@@ -385,6 +393,9 @@ let gameLevel: GameLevel | null = null;
                 padding: 20px;
                 border-radius: 5px;
                 text-align: center;
+                max-width: 80%;
+                max-height: 80%;
+                overflow-y: auto;
             }
             button {
                 margin-top: 10px;
@@ -399,12 +410,19 @@ export class GameComponent implements OnInit {
     readonly gameService = inject(GameService);
     private router = inject(Router);
     showModal = signal<boolean>(false);
+    currentMessage = signal<Message | null>(null);
+    private messages: Message[] = [];
     constructor() {
         GLOBAL_SERVICES = this.gameService;
         this.gameService.gameComponent.set(this);
     }
 
+    openModal() {
+        this.showRandomMessage();
+    }
+
     ngOnInit() {
+        this.loadMessages();
         this.gameService.playMusic('assets/sounds/scape_2.mp3');
         const level = this.gameService.currentLevel() ?? (JSON.parse(localStorage.getItem('currentLevel') ?? 'null') as LevelData | null);
 
@@ -425,6 +443,41 @@ export class GameComponent implements OnInit {
             flag: level.flag,
         };
 
+        this.initializeGame();
+    }
+    ngOnDestroy() {
+        localStorage.removeItem('currentLevel');
+    }
+    closeModal() {
+        this.showModal.set(false);
+        const scene = this.game.scene.getScene('default')?.scene.key;
+        if (scene) {
+            this.game.scene.resume(scene);
+        }
+    }
+
+    showRandomMessage() {
+        if (this.messages.length > 0) {
+            const randomIndex = Math.floor(Math.random() * this.messages.length);
+            this.currentMessage.set(this.messages[randomIndex]);
+        }
+        this.showModal.set(true);
+    }
+
+    private loadMessages() {
+     
+
+        fetch('assets/message.json')
+            .then((response) => response.json())
+            .then((data) => {
+                this.messages = data;
+            })
+            .catch((error) => {
+                console.error('Error loading messages:', error);
+            });
+    }
+
+    private initializeGame() {
         this.game = new Phaser.Game({
             type: Phaser.AUTO,
             width: window.innerWidth,
@@ -434,7 +487,7 @@ export class GameComponent implements OnInit {
                 default: 'arcade',
                 arcade: {
                     gravity: { y: 2000, x: 0 },
-                    debug: false, // Set to true for debugging
+                    debug: false,
                 },
             },
             render: {
@@ -450,15 +503,5 @@ export class GameComponent implements OnInit {
                 autoCenter: Phaser.Scale.CENTER_BOTH,
             },
         });
-    }
-    ngOnDestroy() {
-        localStorage.removeItem('currentLevel');
-    }
-    closeModal() {
-        this.showModal.set(false);
-        const scene = this.game.scene.getScene('default')?.scene.key;
-        if (scene) {
-            this.game.scene.resume(scene);
-        }
     }
 }
