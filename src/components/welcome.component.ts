@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { JsonImportExportService } from '../services/import-export.service';
 import { GameService } from '../services/game.service';
-import { GameComponent } from "./game.component";
+import { GameComponent } from './game.component';
 
 @Component({
     selector: 'app-welcome',
@@ -14,9 +14,9 @@ import { GameComponent } from "./game.component";
             <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center text-gray-800">
                 <!-- Panel de bienvenida -->
                 <div *ngIf="!showMenu" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-                    <h1 class="text-6xl font-bold mb-8">Bienvenido</h1>
+                    <h1 class="text-6xl font-bold mb-8">{{ welcomeMessage }}</h1>
                     <button (click)="enterApp()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-xl transition duration-300 ease-in-out transform hover:scale-105">
-                        Entrar
+                        {{ buttonText }}
                     </button>
                 </div>
 
@@ -29,18 +29,13 @@ import { GameComponent } from "./game.component";
                     <ul class="space-y-2">
                         @for (project of listProjects(); track project) {
                             <li class="border border-gray-200 rounded-lg overflow-hidden">
-                                <button class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-200" (click)="loadPorject(project)">
+                                <button class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-200" (click)="loadProject(project)">
                                     {{ project.replace('_', ' ').toUpperCase() }}
                                 </button>
                             </li>
                         }
                     </ul>
                     <p class="text-gray-600 text-center mt-4">{{ message }}</p>
-
-                    <!-- Botón para controlar la música -->
-                    <!-- <button (click)="toggleMusic()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                        {{ gameService.isPlaying() ? 'Pausar Música' : 'Reproducir Música' }}
-                    </button> -->
                 </div>
             </div>
         } @else {
@@ -50,16 +45,19 @@ import { GameComponent } from "./game.component";
         }
     `,
 })
-export class WelcomeComponent {
+export class WelcomeComponent implements OnInit {
     private jsonService = inject(JsonImportExportService);
     gameService = inject(GameService);
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     listProjects = signal<string[] | null>(null);
 
     mode = signal<'welcome' | 'game'>('welcome');
 
     message = 'Cargando niveles...';
     showMenu = false;
+    welcomeMessage = 'Bienvenido';
+    buttonText = 'Entrar';
 
     constructor() {
         this.jsonService.listProjects().subscribe((projects) => {
@@ -68,21 +66,29 @@ export class WelcomeComponent {
         });
     }
 
+    ngOnInit() {
+        this.route.queryParams.subscribe((params) => {
+            const state = params['state'];
+            if (state === '1') {
+                this.welcomeMessage = 'Game Over';
+                this.buttonText = 'Intentar de nuevo';
+            } else if (state === '2') {
+                this.welcomeMessage = '¡Tú ganaste!';
+                this.buttonText = 'Jugar de nuevo';
+            }
+        });
+    }
+
     enterApp() {
         this.showMenu = true;
         this.gameService.playMusic('assets/sounds/startMenu.mp3');
     }
 
-    toggleMusic() {
-        this.gameService.toggleMusic();
-    }
-
-    loadPorject(project: string) {
+    loadProject(project: string) {
         this.message = 'Cargando nivel...';
         this.jsonService.getProjectPromise(project).then((levelData) => {
             this.gameService.currentLevel.set(levelData);
             this.message = '';
-            //this.router.navigate(['/game']);
             this.mode.set('game');
         });
     }

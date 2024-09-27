@@ -1,16 +1,16 @@
-import { Component, OnInit, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ElementRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as Phaser from 'phaser';
-import { GAME_CONSTANTS } from '../services/levels';
-import { Fire, Collectible, GameLevel, LevelData } from '../services/types';
+import { Cell, Collectible, GameLevel, LevelData } from '../services/types';
 import { GameService } from '../services/game.service';
 import { Router } from '@angular/router';
+const GAME_CONSTANTS = {
+    boxSize: 60,
+    worldWidth: 1200 * 60, // 200 cajas de ancho
+    worldHeight: 0, // Se establecerá dinámicamente
+};
 
 let GLOBAL_SERVICES: GameService | null = null;
-function collectItem(player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) {
-    (item as Phaser.GameObjects.Rectangle).setVisible(false);
-    (item.body as Phaser.Physics.Arcade.StaticBody).enable = false;
-}
 
 function handleFireDamage(player: Phaser.Physics.Arcade.Sprite, fire: Phaser.GameObjects.GameObject) {
     const scene = player.scene;
@@ -25,10 +25,15 @@ function handleFireDamage(player: Phaser.Physics.Arcade.Sprite, fire: Phaser.Gam
 
         if (playerData.health <= 0) {
             // Game over logic here
-            window.location.href = '/';
+            window.location.href = '/?state=1';
         }
     }
 }
+
+function handleFlagCollision(player: Phaser.Physics.Arcade.Sprite, flag: Phaser.Physics.Arcade.Sprite) {
+    window.location.href = '/?state=2';
+}
+
 
 function handleMovingPlatformCollision(player: Phaser.GameObjects.GameObject, platform: Phaser.GameObjects.GameObject) {
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
@@ -48,6 +53,7 @@ function preload(this: Phaser.Scene) {
     this.load.image('movingPlatform', 'assets/moving-platform.png');
     this.load.image('starGold', 'assets/starGold.png');
     this.load.image('heroJump', 'assets/hero_jump.png');
+    this.load.image('flag', 'assets/flag.png');
     this.load.spritesheet('fire', 'assets/fire_sprite.png', {
         frameWidth: 105,
         frameHeight: 105,
@@ -87,6 +93,7 @@ function create(this: Phaser.Scene) {
     backgroundTileSprite.texture.setFilter(Phaser.Textures.NEAREST);
 
     this.data.set('background', backgroundTileSprite);
+    
 
     // Crear plataformas
     const platforms = this.physics.add.staticGroup();
@@ -126,6 +133,15 @@ function create(this: Phaser.Scene) {
         repeat: -1,
     });
 
+    if (gameLevel?.flag) {
+        const flag = this.physics.add.sprite(gameLevel.flag.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - gameLevel.flag.y * GAME_CONSTANTS.boxSize, 'flag');
+        flag.setDisplaySize(GAME_CONSTANTS.boxSize, GAME_CONSTANTS.boxSize * 1.5);
+        this.data.set('flag', flag);
+
+        // Agregar colisión entre el jugador y la bandera
+        this.physics.add.overlap(player, flag, handleFlagCollision as any, undefined, this);
+    }
+
     const playerBody = player.body as Phaser.Physics.Arcade.Body;
     playerBody.setCollideWorldBounds(true);
 
@@ -134,7 +150,7 @@ function create(this: Phaser.Scene) {
 
     // Crear enemigos
     const enemies = this.physics.add.staticGroup();
-    gameLevel!.fire.forEach((enemy: Fire) => {
+    gameLevel!.fire.forEach((enemy: Cell) => {
         let enemySprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
 
         enemySprite = this.add.sprite(enemy.x * GAME_CONSTANTS.boxSize, GAME_CONSTANTS.worldHeight - GAME_CONSTANTS.boxSize / 2 - GAME_CONSTANTS.boxSize, 'fire');
@@ -159,6 +175,14 @@ function create(this: Phaser.Scene) {
     // Configurar la cámara para seguir al jugador
     this.cameras.main.setBounds(0, 0, GAME_CONSTANTS.worldWidth, GAME_CONSTANTS.worldHeight);
     this.cameras.main.startFollow(player, true, 0.05, 0.05);
+
+    const collectItem = (player: Phaser.GameObjects.GameObject, item: Phaser.GameObjects.GameObject) => {
+        (item as Phaser.GameObjects.Rectangle).setVisible(false);
+        (item.body as Phaser.Physics.Arcade.StaticBody).enable = false;
+        //this.showModal = true;
+        this.game.scene.pause(this.scene.key);
+        GLOBAL_SERVICES?.gameComponent()?.showModal.set(true);
+    };
 
     // Agregar colisiones adicionales
     this.physics.add.collider(enemies, platforms);
@@ -297,6 +321,14 @@ let gameLevel: GameLevel | null = null;
             }
         </div>
         <div id="gameContainer"></div>
+        @if (showModal()) {
+            <div class="modal">
+                <div class="modal-content">
+                    <h2>¡Has recogido una estrella!</h2>
+                    <button (click)="closeModal()">Aceptar</button>
+                </div>
+            </div>
+        }
     `,
     styles: [
         `
@@ -336,6 +368,29 @@ let gameLevel: GameLevel | null = null;
                     transform: rotateY(360deg);
                 }
             }
+            .modal {
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .modal-content {
+                background-color: white;
+                padding: 20px;
+                border-radius: 5px;
+                text-align: center;
+            }
+            button {
+                margin-top: 10px;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
         `,
     ],
 })
@@ -343,9 +398,10 @@ export class GameComponent implements OnInit {
     game!: Phaser.Game;
     readonly gameService = inject(GameService);
     private router = inject(Router);
-
+    showModal = signal<boolean>(false);
     constructor() {
         GLOBAL_SERVICES = this.gameService;
+        this.gameService.gameComponent.set(this);
     }
 
     ngOnInit() {
@@ -366,6 +422,7 @@ export class GameComponent implements OnInit {
             name: level.name,
             platforms: level.platforms,
             stars: level.stars,
+            flag: level.flag,
         };
 
         this.game = new Phaser.Game({
@@ -396,5 +453,12 @@ export class GameComponent implements OnInit {
     }
     ngOnDestroy() {
         localStorage.removeItem('currentLevel');
+    }
+    closeModal() {
+        this.showModal.set(false);
+        const scene = this.game.scene.getScene('default')?.scene.key;
+        if (scene) {
+            this.game.scene.resume(scene);
+        }
     }
 }

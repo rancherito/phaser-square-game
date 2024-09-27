@@ -5,127 +5,132 @@ import { JsonImportExportService } from '../services/import-export.service';
 import { ToastrService } from 'ngx-toastr';
 import { Cell, LevelData } from '../services/types';
 
-
 interface Point {
     x: number;
     y: number;
 }
 
-type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser';
+type EntityType = 'hero' | 'platform' | 'fire' | 'star' | 'eraser' | 'flag';
 
 @Component({
     selector: 'app-interactive-grid',
     standalone: true,
     imports: [CommonModule, FormsModule],
     template: `
-    <div class="flex">
-      <div #gridContainer class="grid-container"
-           (mousedown)="handleMouseDown($event)"
-           (mouseup)="handleMouseUp($event)"
-           (mousemove)="handleMouseMove($event)"
-           (mouseleave)="handleMouseLeave()"
-           >
-        <div class="grilla" 
-             [style.width.px]="gridWidth()" 
-             [style.height.px]="rows() * cellSize">
-          @for (cell of heroCells(); track cell.x + '-' + cell.y) {
-            <div class="cell hero" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
-          }
-          @for (cell of platformCells(); track cell.x + '-' + cell.y) {
-            <div class="cell platform" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
-          }
-          @for (cell of fireCells(); track cell.x + '-' + cell.y) {
-            <div class="cell fire" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
-          }
-          @for (cell of starCells(); track cell.x + '-' + cell.y) {
-            <div class="cell star" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
-          }
+        <div class="flex">
+            <div #gridContainer class="grid-container" (mousedown)="handleMouseDown($event)" (mouseup)="handleMouseUp($event)" (mousemove)="handleMouseMove($event)" (mouseleave)="handleMouseLeave()">
+                <div class="grilla" [style.width.px]="gridWidth()" [style.height.px]="rows() * cellSize">
+                    @for (cell of heroCells(); track cell.x + '-' + cell.y) {
+                        <div class="cell hero" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
+                    }
+                    @for (cell of platformCells(); track cell.x + '-' + cell.y) {
+                        <div class="cell platform" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
+                    }
+                    @for (cell of fireCells(); track cell.x + '-' + cell.y) {
+                        <div class="cell fire" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
+                    }
+                    @for (cell of starCells(); track cell.x + '-' + cell.y) {
+                        <div class="cell star" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
+                    }
+                    @for (cell of flagCells(); track cell.x + '-' + cell.y) {
+                        <div class="cell flag" [style.left.px]="cell.x * cellSize" [style.bottom.px]="cell.y * cellSize"></div>
+                    }
+                </div>
+            </div>
+            <div class="panel">
+                <div class="mb-4">
+                    <label for="columnsInput" class="block mb-2 font-bold">Columnas: </label>
+                    <input id="columnsInput" type="number" [ngModel]="columns()" (ngModelChange)="updateColumns($event)" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+                <div class="mb-4">
+                    <h3 class="mb-2 font-bold">Seleccionar entidad:</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button (click)="selectEntity('hero')" [class.bg-blue-200]="selectedEntity() === 'hero'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Héroe</button>
+                        <button (click)="selectEntity('platform')" [class.bg-blue-200]="selectedEntity() === 'platform'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Platform</button>
+                        <button (click)="selectEntity('fire')" [class.bg-blue-200]="selectedEntity() === 'fire'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Fire</button>
+                        <button (click)="selectEntity('star')" [class.bg-blue-200]="selectedEntity() === 'star'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Estrella</button>
+                        <button (click)="selectEntity('flag')" [class.bg-blue-200]="selectedEntity() === 'flag'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Bandera</button>
+                        <button (click)="selectEntity('eraser')" [class.bg-blue-200]="selectedEntity() === 'eraser'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Borrador</button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <button (click)="exportJSON()" class="w-full p-2 mb-2 bg-blue-500 text-white rounded hover:bg-blue-600">Exportar JSON</button>
+                    <input type="file" (change)="importJSON($event)" accept=".json" class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+                <div class="mb-4">
+                    <input [(ngModel)]="projectName" placeholder="Nombre del proyecto" class="w-full p-2 mb-2 border border-gray-300 rounded" />
+                    <button (click)="saveProject()" class="w-full p-2 mb-2 bg-green-500 text-white rounded hover:bg-green-600">Guardar Proyecto</button>
+                </div>
+                <div class="mb-4">
+                    <button (click)="loadProjects()" class="w-full p-2 mb-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Cargar Proyectos</button>
+                    <select [(ngModel)]="selectedProject" class="w-full p-2 mb-2 border border-gray-300 rounded" (ngModelChange)="loadProject()">
+                        <option value="">Seleccionar proyecto</option>
+                        @for (project of projects; track $index) {
+                            <option [value]="project">{{ project }}</option>
+                        }
+                    </select>
+                    <button (click)="deleteProject()" [disabled]="!selectedProject" class="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600" [class.opacity-50]="!selectedProject">
+                        Eliminar Proyecto
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="panel">
-      <div class="mb-4">
-          <label for="columnsInput" class="block mb-2 font-bold">Columnas: </label>
-          <input
-            id="columnsInput"
-            type="number"
-            [ngModel]="columns()"
-            (ngModelChange)="updateColumns($event)"
-            class="w-full p-2 border border-gray-300 rounded"
-          >
-        </div>
-        <div class="mb-4">
-          <h3 class="mb-2 font-bold">Seleccionar entidad:</h3>
-          <div class="grid grid-cols-2 gap-2">
-            <button (click)="selectEntity('hero')" [class.bg-blue-200]="selectedEntity() === 'hero'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Héroe</button>
-            <button (click)="selectEntity('platform')" [class.bg-blue-200]="selectedEntity() === 'platform'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Platform</button>
-            <button (click)="selectEntity('fire')" [class.bg-blue-200]="selectedEntity() === 'fire'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Fire</button>
-            <button (click)="selectEntity('star')" [class.bg-blue-200]="selectedEntity() === 'star'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Estrella</button>
-            <button (click)="selectEntity('eraser')" [class.bg-blue-200]="selectedEntity() === 'eraser'" class="p-2 border border-gray-300 rounded hover:bg-blue-100">Borrador</button>
-          </div>
-        </div>
-        <div class="mb-4">
-          <button (click)="exportJSON()" class="w-full p-2 mb-2 bg-blue-500 text-white rounded hover:bg-blue-600">Exportar JSON</button>
-          <input type="file" (change)="importJSON($event)" accept=".json" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        <div class="mb-4">
-          <input [(ngModel)]="projectName" placeholder="Nombre del proyecto" class="w-full p-2 mb-2 border border-gray-300 rounded">
-          <button (click)="saveProject()" class="w-full p-2 mb-2 bg-green-500 text-white rounded hover:bg-green-600">Guardar Proyecto</button>
-        </div>
-        <div class="mb-4">
-          <button (click)="loadProjects()" class="w-full p-2 mb-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Cargar Proyectos</button>
-          <select [(ngModel)]="selectedProject" class="w-full p-2 mb-2 border border-gray-300 rounded" (ngModelChange)="loadProject()">
-            <option value="">Seleccionar proyecto</option>
-            <!-- <option *ngFor="let project of projects" [value]="project">{{project}}</option> -->
-             @for (project of projects; track $index) {
-                <option [value]="project">{{project}}</option>  
-             }
-          </select>
-          <button (click)="deleteProject()" [disabled]="!selectedProject" class="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600" [class.opacity-50]="!selectedProject">Eliminar Proyecto</button>
-        </div>
-      </div>
-    </div>
-  `,
-    styles: [`
-    
-    .grid-container {
-      overflow-x: auto;
-      width: calc(100% - 300px);
-      border: 1px solid black;
-    }
-    .grilla {
-      position: relative;
-      height: 1200px;
-      background-color: #ccc;
-      background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), 
-                        linear-gradient(-45deg, #ddd 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #ddd 75%), 
-                        linear-gradient(-45deg, transparent 75%, #ddd 75%);
-      background-size: 120px 120px;
-      background-position: 0 0, 0 60px, 60px -60px, -60px 0px;
-    }
-    .cell {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      box-sizing: border-box;
-      pointer-events: none;
-    }
-    .hero { background-color: blue; }
-    .platform { background-color: green; }
-    .fire { background-color: red; }
-    .star { background-color: yellow; }
-    .panel {
-      width: 300px;
-      padding: 10px;
-    }
-    button {
-      margin: 5px;
-      padding: 5px 10px;
-    }
-    button.selected {
-      background-color: #ddd;
-    }
-  `]
+    `,
+    styles: [
+        `
+            .grid-container {
+                overflow-x: auto;
+                width: calc(100% - 300px);
+                border: 1px solid black;
+            }
+            .grilla {
+                position: relative;
+                height: 1200px;
+                background-color: #ccc;
+                background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%),
+                    linear-gradient(-45deg, transparent 75%, #ddd 75%);
+                background-size: 120px 120px;
+                background-position:
+                    0 0,
+                    0 60px,
+                    60px -60px,
+                    -60px 0px;
+            }
+            .cell {
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                box-sizing: border-box;
+                pointer-events: none;
+            }
+            .hero {
+                background-color: blue;
+            }
+            .platform {
+                background-color: green;
+            }
+            .fire {
+                background-color: red;
+            }
+            .star {
+                background-color: yellow;
+            }
+            .flag {
+                background-color: purple;
+            }
+            .panel {
+                width: 300px;
+                padding: 10px;
+            }
+            button {
+                margin: 5px;
+                padding: 5px 10px;
+            }
+            button.selected {
+                background-color: #ddd;
+            }
+        `,
+    ],
 })
 export class LevelEditorComponent implements AfterViewInit {
     @ViewChild('gridContainer') gridContainer!: ElementRef;
@@ -137,6 +142,8 @@ export class LevelEditorComponent implements AfterViewInit {
     platformCells = signal<Cell[]>([]);
     fireCells = signal<Cell[]>([]);
     starCells = signal<Cell[]>([]);
+    flagCells = signal<Cell[]>([]);
+
     isPainting = signal(false);
     mouseDownPosition = signal<Point | null>(null);
     currentPosition = signal<Point | null>(null);
@@ -151,10 +158,10 @@ export class LevelEditorComponent implements AfterViewInit {
     private toastsService: ToastrService = inject(ToastrService);
     ngAfterViewInit() {
         this.gridContainer.nativeElement.addEventListener('scroll', () => {
-            this.heroCells.update(cells => [...cells]);
-            this.platformCells.update(cells => [...cells]);
-            this.fireCells.update(cells => [...cells]);
-            this.starCells.update(cells => [...cells]);
+            this.heroCells.update((cells) => [...cells]);
+            this.platformCells.update((cells) => [...cells]);
+            this.fireCells.update((cells) => [...cells]);
+            this.starCells.update((cells) => [...cells]);
         });
         this.loadProjects();
     }
@@ -171,10 +178,7 @@ export class LevelEditorComponent implements AfterViewInit {
         this.currentPosition.set(currentPos);
 
         const startPos = this.mouseDownPosition()!;
-        const distance = Math.sqrt(
-            Math.pow(currentPos.x - startPos.x, 2) +
-            Math.pow(currentPos.y - startPos.y, 2)
-        );
+        const distance = Math.sqrt(Math.pow(currentPos.x - startPos.x, 2) + Math.pow(currentPos.y - startPos.y, 2));
 
         if (distance >= 5) {
             this.isPainting.set(true);
@@ -217,7 +221,7 @@ export class LevelEditorComponent implements AfterViewInit {
         return { x: event.clientX, y: event.clientY };
     }
 
-    getCellCoordinates(event: MouseEvent): { x: number, y: number } {
+    getCellCoordinates(event: MouseEvent): { x: number; y: number } {
         const rect = this.gridContainer.nativeElement.getBoundingClientRect();
         const scrollLeft = this.gridContainer.nativeElement.scrollLeft;
         const x = Math.floor((event.clientX - rect.left + scrollLeft) / this.cellSize);
@@ -242,22 +246,26 @@ export class LevelEditorComponent implements AfterViewInit {
                 this.heroCells.set([{ x, y }]);
                 break;
             case 'platform':
-                this.platformCells.update(cells => [...cells, { x, y }]);
+                this.platformCells.update((cells) => [...cells, { x, y }]);
                 break;
             case 'fire':
-                this.fireCells.update(cells => [...cells, { x, y }]);
+                this.fireCells.update((cells) => [...cells, { x, y }]);
                 break;
             case 'star':
-                this.starCells.update(cells => [...cells, { x, y }]);
+                this.starCells.update((cells) => [...cells, { x, y }]);
+                break;
+            case 'flag':
+                this.flagCells.set([{ x, y }]);
                 break;
         }
     }
 
     removeEntityAt(x: number, y: number) {
-        this.heroCells.update(cells => cells.filter(cell => cell.x !== x || cell.y !== y));
-        this.platformCells.update(cells => cells.filter(cell => cell.x !== x || cell.y !== y));
-        this.fireCells.update(cells => cells.filter(cell => cell.x !== x || cell.y !== y));
-        this.starCells.update(cells => cells.filter(cell => cell.x !== x || cell.y !== y));
+        this.heroCells.update((cells) => cells.filter((cell) => cell.x !== x || cell.y !== y));
+        this.platformCells.update((cells) => cells.filter((cell) => cell.x !== x || cell.y !== y));
+        this.fireCells.update((cells) => cells.filter((cell) => cell.x !== x || cell.y !== y));
+        this.starCells.update((cells) => cells.filter((cell) => cell.x !== x || cell.y !== y));
+        this.flagCells.update((cells) => cells.filter((cell) => cell.x !== x || cell.y !== y));
     }
 
     selectEntity(entity: EntityType) {
@@ -270,19 +278,20 @@ export class LevelEditorComponent implements AfterViewInit {
 
     exportJSON() {
         const levelData: LevelData = {
-            name: "New Level",
+            name: 'New Level',
             platforms: this.jsonService.optimizePlatforms(this.platformCells()),
             hero: this.heroCells()[0] || null,
             fire: this.fireCells(),
             stars: this.starCells(),
-            background: "bg_forest"
+            flag: this.flagCells()[0] || null,
+            background: 'bg_forest',
         };
 
         const jsonString = this.jsonService.exportJSON(levelData);
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonString);
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(jsonString);
         const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "level.json");
+        downloadAnchorNode.setAttribute('href', dataStr);
+        downloadAnchorNode.setAttribute('download', 'level.json');
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
@@ -300,13 +309,8 @@ export class LevelEditorComponent implements AfterViewInit {
                     this.heroCells.set(levelData.hero ? [levelData.hero] : []);
                     this.fireCells.set(levelData.fire);
                     this.starCells.set(levelData.stars);
-
-                    const maxX = this.jsonService.getMaxX([
-                        ...this.platformCells(),
-                        ...this.heroCells(),
-                        ...this.fireCells(),
-                        ...this.starCells()
-                    ]);
+                    this.flagCells.set(levelData.flag ? [levelData.flag] : []);
+                    const maxX = this.jsonService.getMaxX([...this.platformCells(), ...this.heroCells(), ...this.fireCells(), ...this.starCells(), ...this.flagCells()]);
                     this.updateColumns(Math.max(maxX + 1, 20));
                 } catch (error) {
                     console.error('Error importing JSON:', error);
@@ -329,16 +333,18 @@ export class LevelEditorComponent implements AfterViewInit {
             hero: this.heroCells()[0] || null,
             fire: this.fireCells(),
             stars: this.starCells(),
-            background: "bg_forest"
+            background: 'bg_forest',
+            flag: this.flagCells()[0] || null,
         };
 
-        this.jsonService.saveProject(this.projectName, levelData)
+        this.jsonService
+            .saveProject(this.projectName, levelData)
             .then(() => {
                 // alert('Proyecto guardado exitosamente');
                 this.toastsService.success('Proyecto guardado exitosamente');
                 this.loadProjects();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error al guardar el proyecto:', error);
                 // alert('Error al guardar el proyecto');
                 this.toastsService.error('Error al guardar el proyecto');
@@ -346,7 +352,7 @@ export class LevelEditorComponent implements AfterViewInit {
     }
 
     loadProjects() {
-        this.jsonService.listProjects().subscribe(projectNames => {
+        this.jsonService.listProjects().subscribe((projectNames) => {
             this.projects = projectNames;
         });
     }
@@ -355,19 +361,16 @@ export class LevelEditorComponent implements AfterViewInit {
         if (!this.selectedProject) return;
 
         this.jsonService.getProject(this.selectedProject).subscribe(
-            levelData => {
+            (levelData) => {
                 if (levelData) {
+                    this.updateColumns(20);
                     this.platformCells.set(this.jsonService.expandOptimizedPlatforms(levelData.platforms));
                     this.heroCells.set(levelData.hero ? [levelData.hero] : []);
                     this.fireCells.set(levelData.fire);
                     this.starCells.set(levelData.stars);
+                    this.flagCells.set(levelData.flag ? [levelData.flag] : []);
 
-                    const maxX = this.jsonService.getMaxX([
-                        ...this.platformCells(),
-                        ...this.heroCells(),
-                        ...this.fireCells(),
-                        ...this.starCells()
-                    ]);
+                    const maxX = this.jsonService.getMaxX([...this.platformCells(), ...this.heroCells(), ...this.fireCells(), ...this.starCells(), ...this.flagCells()]);
                     this.updateColumns(Math.max(maxX + 1, 20));
                     // alert('Proyecto cargado exitosamente');
                     this.toastsService.success('Proyecto cargado exitosamente');
@@ -376,11 +379,11 @@ export class LevelEditorComponent implements AfterViewInit {
                     this.toastsService.error('Proyecto no encontrado');
                 }
             },
-            error => {
+            (error) => {
                 console.error('Error al cargar el proyecto:', error);
                 // alert('Error al cargar el proyecto');
                 this.toastsService.error('Error al cargar el proyecto');
-            }
+            },
         );
     }
 
@@ -388,14 +391,15 @@ export class LevelEditorComponent implements AfterViewInit {
         if (!this.selectedProject) return;
 
         if (confirm(`¿Está seguro de que desea eliminar el proyecto "${this.selectedProject}"?`)) {
-            this.jsonService.deleteProject(this.selectedProject)
+            this.jsonService
+                .deleteProject(this.selectedProject)
                 .then(() => {
                     // alert('Proyecto eliminado exitosamente');
                     this.toastsService.success('Proyecto eliminado exitosamente');
                     this.loadProjects();
                     this.selectedProject = '';
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.error('Error al eliminar el proyecto:', error);
                     // alert('Error al eliminar el proyecto');
                     this.toastsService.error('Error al eliminar el proyecto');

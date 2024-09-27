@@ -11,11 +11,6 @@ export interface Player extends Cell {
     y: number;
 }
 
-export interface Fire {
-    x: number;
-    y: number;
-}
-
 export interface Collectible {
     x: number;
     y: number;
@@ -26,9 +21,10 @@ export interface GameLevel {
     name: string;
     platforms: Platform[];
     hero: Player;
-    fire: Fire[];
+    fire: Cell[];
     stars: Collectible[];
     background: string;
+    flag: Cell | null;
 }
 export interface LevelData {
     name: string;
@@ -37,6 +33,7 @@ export interface LevelData {
     fire: Cell[];
     stars: Cell[];
     background: string;
+    flag: Cell | null;
 }
 
 export interface Cell {
